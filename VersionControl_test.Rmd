@@ -1,7 +1,0 @@
----
-title: "Version Control Test"
-author: "John Imperato"
-output: github_document
----
-
-Hello World
