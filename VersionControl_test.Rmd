@@ -1,7 +1,7 @@
 ---
-title: "GitHub Version Control Setup"
-output: html_document
-date: "2024-09-16"
+title: "Version Control Test"
+author: "John Imperato"
+output: github_document
 ---
 
 Hello World
