@@ -1,7 +1,8 @@
 ---
-title: "Mossy_mrmr_model"
-output: html_document
-date: "2024-09-12"
+title: "Mossy Pond mrmr model 1"
+output: GitHub_document
+date: "`r Sys.Date()`"
+author: "Your Name"
 ---
 
 Load packages 
@@ -43,8 +44,12 @@ captures <- captures[captures$frog_state != "dead", ]
 
 # ATTEMPT TO FIGURE THE PROBLEM OUT
 # Include only a subset of columns from captures. This seems to have worked in the past. 
-captures <- unique(captures[ , c(2,3,5,7)])
+### captures <- unique(captures[ , c(2,3,5,7)])
   # when I create this subset, 5 observations disappear
+  # This subset didn't work. Lets try getting rid of CA lake id column
+captures <- unique(captures[ , c(3,5,7)])
+  # another 2 observations disappeared
+# I have not yet run this model
 
 ```
 
