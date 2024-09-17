@@ -1,0 +1,281 @@
+---
+title: "Mossy Pond Model 1 RMark"
+output: GitHub_document
+date: "2024-06-28"
+---
+
+```{r setup, include=FALSE}
+
+knitr::opts_knit$set(root.dir = "V:\\Data and Code\\Mossy-Pond\\Mossy-Pond")
+
+```
+
+
+```{r}
+
+library(RMark)
+
+capture <- read.csv("Binary_Capture_History.csv", colClasses = c('numeric', 'character'))
+
+
+```
+
+
+## Set time intervals: 
+
+```{r}
+# Intervals in days between primary periods
+time.intervals.1 <- c(0,0,33,0,0,54,0,0,271,0,0,32,0,0,55,0,0,299,0,0,25,0,0,26,0,0,320,0,0,26,0,0,26,0,0,278,0,0,19,0,0,26,0,0,26,0)
+
+# Intervals with same arbitrary time (1) between primary periods
+time.intervals.2 <- c(0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0)
+
+# Exact number of months between primary periods
+time.intervals.4 <- time.intervals.1/30
+
+# Changing it up -- each year is the primary period with 9+ secondary periods. Is this valid? 
+time.intervals.5 <- c(0,0,0,0,0,0,0,0,271,0,0,0,0,0,0,0,0,299,0,0,0,0,0,0,0,0,320,0,0,0,0,0,0,0,0,278,0,0,0,0,0,0,0,0,0,0)
+
+```
+
+# Building Models
+
+
+## Series 1 Models
+
+All parameters are fixed ~ 1 for Series 1 Models. Time intervals are in days and months. The purpose of using such a simple model is to test whether the formatting of time intervals has an effect on the results. 
+
+### Model 1: all  parameters fixed ~ 1, time intervals in days
+
+```{r}
+
+M1data <- process.data(data = capture,
+                  model = "Robust",
+                  time.intervals = time.intervals.1)
+
+design_data <- make.design.data(M1data)
+
+mod1 <- mark(M1data, design_data, model = "Robust",
+              model.parameters = list(
+                S = list(formula = ~1),  # Survival
+                p = list(formula = ~1),  # Capture probability
+                c = list(formula = ~1),  # Recapture probability
+                GammaPrime = list(formula = ~1),  # Temporary emigration
+                GammaDoublePrime = list(formula = ~1)  # Immigration
+              ))
+
+mod1_summary <- summary(mod1, transform = TRUE)
+
+mod1$results
+
+```
+
+## Model 1.1: all parameters fixed ~ 1, time intervals in months (days/30)
+
+The results of Model 1.1 show identical parameter estimates to Model 1, which suggests that time intervals can be formatted on any scale. 
+
+```{r}
+
+M1.1data <- process.data(data = capture,
+                  model = "Robust",
+                  time.intervals = time.intervals.4)
+
+design_data <- make.design.data(M1.1data)
+
+mod1.1 <- mark(M1data, design_data, model = "Robust",
+              model.parameters = list(
+                S = list(formula = ~1),  # Survival
+                p = list(formula = ~1),  # Capture probability
+                c = list(formula = ~1),  # Recapture probability
+                GammaPrime = list(formula = ~1),  # Temporary emigration
+                GammaDoublePrime = list(formula = ~1)  # Immigration
+              ))
+
+mod1.1_summary <- summary(mod1, transform = TRUE)
+
+mod1.1$results
+
+```
+
+
+## Series 2 Models
+
+
+Series 2 models will focus on the gamma parameters, which deal with temporary emigration. I will run models for three scenarios: Fixed Emigration (no emigration), Random Emigration, and Markovian Emigration. 
+
+	1.	mod2.1: This model assumes no temporary emigration, where both \Gamma{\prime}{\prime} and \Gamma{\prime} are fixed at 0,                   indicating that no animals leave or return to the study area during the study period.
+	2.	mod2.2: This model assumes random emigration where \Gamma{\prime}{\prime} and \Gamma{\prime} are both shared and vary with time.
+	3.  mod2.3: This model assumes Markovian emigration, where \Gamma{\prime}{\prime} and \Gamma{\prime} both vary with time                       independently, allowing the model to account for state-dependent emigration.
+
+
+```{r}
+
+M2data <- process.data(data = capture,
+                  model = "Robust",
+                  time.intervals = time.intervals.1)
+
+design_data <- make.design.data(M2data)
+
+```
+
+No Emigration
+
+Problems: 1. The model does not run when the 'fixed = 0' term is included for the gammas. It runs when it is included for only gamma', but the model output is *******. When I remove the term altogether, it runs, but paramater estimates are wonky and all std errors are 0. 
+
+```{r}
+
+mod2.1 <- mark(M2data, design_data, model = "Robust",
+                  model.parameters = list(
+                    S = list(formula = ~ time),  # Survival
+                    p = list(formula = ~ session),  # Capture probability
+                    c = list(formula = ~ session),  # Recapture probability
+                    GammaPrime = list(formula = ~1, fixed = 0),  # fixed gamma'
+                    GammaDoublePrime = list(formula = ~1) 
+                  ))
+
+mod2.1_summary <- summary(mod2.1, transform = TRUE)
+
+N2.1 <- mod2.1$results$derived$`N Population Size`
+
+mod2.1_results <- mod2.1$results$real
+
+
+```
+
+Random Emigration
+
+```{r}
+
+mod2.2 <- mark(
+  M2data, 
+  design_data, 
+  model = "Robust",
+  model.parameters = list(
+    S = list(formula = ~ time),  # Survival varies by time
+    p = list(formula = ~ session),  # Capture probability varies by session
+    c = list(formula = ~ session),  # Recapture probability varies by session
+    GammaPrime = list(formula = ~ time, share = TRUE),  # Random emigration (GammaPrime and GammaDoublePrime are shared)
+    GammaDoublePrime = list(formula = ~ time)  # Random emigration
+  )
+)
+
+
+mod2.2_summary <- summary(mod2.2, transform = TRUE)
+
+N2.2 <- mod2.2$results$derived$`N Population Size`
+
+mod2.2_results <- mod2.2$results$real
+
+```
+
+
+## Model 3: Everything varies by time 
+
+```{r}
+
+M3data <- process.data(data = capture,
+                  model = "Robust",
+                  time.intervals = time.intervals.1)
+
+design_data <- make.design.data(M3data)
+
+mod3 <- mark(M3data, design_data, model = "Robust",
+              model.parameters = list(
+                S = list(formula = ~ time),  # Survival
+                p = list(formula = ~ time),  # Capture probability
+                c = list(formula = ~ time),  # Recapture probability
+                GammaPrime = list(formula = ~ time),  # Temporary emigration
+                GammaDoublePrime = list(formula = ~ time)  # Immigration
+              ))
+
+mod3_summary <- summary(mod3, transform = TRUE)
+
+N3 <- mod3$results$derived$`N Population Size`
+
+mod3_results <- mod3$results$real
+
+
+```
+
+## Model 4: Detectability and capture probability vary by session, everything else by time
+
+```{r}
+
+M4data <- process.data(data = capture,
+                  model = "Robust",
+                  time.intervals = time.intervals.4)
+
+design_data <- make.design.data(M4data)
+
+mod4 <- mark(M4data, design_data, model = "Robust",
+              model.parameters = list(
+                S = list(formula = ~ time),  # Survival
+                p = list(formula = ~ session),  # Capture probability
+                c = list(formula = ~ session),  # Recapture probability
+                GammaPrime = list(formula = ~ time),  # Temporary emigration
+                GammaDoublePrime = list(formula = ~ time)  # Immigration
+              ))
+
+mod4_summary <- summary(mod4, transform = TRUE)
+
+N4 <- mod4$results$derived$`N Population Size`
+
+mod4_results <- mod4$results$real
+
+
+```
+
+# Comparing Models
+
+```{r}
+
+models_compare <- collect.models(type = "Robust")
+
+models_compare
+
+
+```
+
+
+```{r}
+
+M5data <- process.data(data = capture,
+                  model = "Robust",
+                  time.intervals = time.intervals.5)
+
+M2data$nocc
+
+design_data <- make.design.data(M5data)
+
+mod5 <- mark(M5data, design_data, model = "Robust",
+              model.parameters = list(
+                S = list(formula = ~ time),  # Survival
+                p = list(formula = ~ session),  # Capture probability
+                c = list(formula = ~ session),  # Recapture probability
+                GammaPrime = list(formula = ~ time),  # Temporary emigration
+                GammaDoublePrime = list(formula = ~ time)  # Immigration
+              ))
+
+mod5_summary <- summary(mod5, transform = TRUE)
+
+N5 <- mod5$results$derived$`N Population Size`
+N5$Year <- 2014:2018
+
+mod5_results <- mod5$results$real
+
+
+```
+
+
+
+
+Model parameters can be fixed (~ 1), vary by time (fixed within but not between primary periods), vary by session (varies between and among primary periods)...
+
+
+S: Survival probability is allowed to vary by time, meaning that it is fixed within primary periods but not between primary periods. The model will produce survival estimates for each primary period. 
+
+
+p and c: Capture and recapture probabilities vary by session, meaning that they are not fixed within primary periods or between primary periods. It is my understanding that p and c should always be ~ session in a Robust model. I will look into this further... 
+
+
+Gamma' and Gamma'': These are the variables that deal with temporary emigration.
