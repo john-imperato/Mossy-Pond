@@ -1,0 +1,76 @@
+---
+title: "Data Formatting"
+output: GitHub_document
+date: "2024-06-26"
+---
+
+```{r setup, include=FALSE}
+
+knitr::opts_knit$set(root.dir = "/Users/johnimperato/Documents/Mossy Pond CMR Analysis/Data and Code/Mossy-Pond/Mossy-Pond")
+
+```
+
+## Read in capture data as provided by Isaac.
+
+Originally given to me in a Microsoft Access database file, I used an online tool to download the .accdb file as a .csv file. Here, I am getting rid of useless time information in the 'Date' column. 
+
+```{r}
+
+capture <- read.csv("Capture_Data.csv")
+
+# Remove "00:00:00 EDT" from Date column because it is the same in all and doesn't add anything
+capture$Date <- gsub("00:00:00 EDT","", capture$Date)
+
+# Convert Date variable from character string to date object (extra space before Y)
+capture$Date <- as.Date(capture$Date, format = "%a %b %d  %Y")
+
+```
+
+## Next, I pivoted the data wide based on PIT tag ID # so it would read as a string of binary digits representing whether or not a frog was captured (1) or not captured (0) on each survey period. 
+
+```{r}
+
+################################################
+
+# Get the code
+
+##############################################
+
+
+```
+
+## Here, I convert my binary strings representing capture data for each unique individual into the format that Program MARK requires. MARK requires an .INP file structured such that each line of the file reads as "(binary capture history string) (frequency of that capture history)(;)." At the recommendation of chapter 2 of the Gentle Intro to MARK book, I structured the data in the longer format as shown in the image below: 
+
+![Data formatting](Data_Format.png)
+
+
+```{r}
+
+# Define the path for the INP file
+inp_file_path <- "capture_history_output.inp"
+
+# Open a file connection for writing
+file_conn <- file(inp_file_path, open = "wt")
+
+# read in binary caopture history file
+capture_history_binary <- read.csv("Binary_Capture_History.csv", colClasses = c("ch" = "character"))
+
+
+# Loop over each binary string in the data frame
+for (i in 1:nrow(capture_history_binary)) {
+  # Format each line as 'binary_string 1;'
+  line <- sprintf("%s 1;", capture_history_binary$ch[i])
+
+  # Write the line to the file
+  writeLines(line, file_conn)
+}
+
+# Close the file connection
+close(file_conn)
+
+# Preview the .inp file and check its length to make sure everything worked. There should be 657 lines int he file, one for each uniquely tagged frog in the study. 
+head(readLines("capture_history_output.inp"))
+length(readLines("capture_history_output.inp"))
+
+```
+
