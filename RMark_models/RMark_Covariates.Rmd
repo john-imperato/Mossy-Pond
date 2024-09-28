@@ -1,0 +1,132 @@
+---
+title: "RMark_Covariates"
+output: html_document
+date: "2024-09-27"
+---
+
+```{r}
+
+library(dplyr)
+library(RMark)
+
+
+```
+
+## Data Formatting
+
+Resolve inconsistencies in frog_sex column. For frogs with multiple sexes listed over multiple captures, use the most recent observation. If the most recent observation is blank, use the most common sex identification.
+
+```{r}
+
+# Load the full capture data set
+capture_data_full <- read.csv("Capture_Data.csv")
+
+# Select relevant columns, remove duplicates, and arrange by PIT tag
+capture_data_full <- capture_data_full %>% 
+  select(Date, PIT_TagCode, frog_sex) %>% 
+  unique() %>% 
+  arrange(PIT_TagCode)
+
+# Clean up the Date column (remove time and convert to Date format)
+capture_data_full$Date <- gsub("00:00:00 EDT", "", capture_data_full$Date)
+capture_data_full$Date <- as.Date(capture_data_full$Date, format = "%a %b %d %Y")
+
+# Write function to resolve the frog)_sex, taking the most recent, or the most common non-empty sex identification if the most recent is empty
+resolve_sex <- function(data) {
+  # Check if there's any non-empty sex data
+  non_empty_data <- data %>% filter(frog_sex != "")
+  
+  if (nrow(non_empty_data) == 0) {
+    return(NA)  # Return NA if no valid sex is found
+  }
+  
+  # Find the most recent sex
+  most_recent <- data %>% filter(Date == max(Date)) %>% pull(frog_sex)
+  
+  if (most_recent != "") {
+    return(most_recent)
+  } else {
+    # If most recent sex is empty, return the most common non-empty sex
+    return(non_empty_data %>% 
+             count(frog_sex) %>% 
+             slice_max(n, n = 1) %>% 
+             pull(frog_sex))
+  }
+}
+
+# Apply the function to resolve the sex for each frog
+resolved_sex_data <- capture_data_full %>%
+  group_by(PIT_TagCode) %>%
+  group_modify(~ mutate(.x, Sex_resolved = resolve_sex(.x))) %>%
+  ungroup() %>% 
+  select(PIT_TagCode, Sex_resolved) %>% 
+  unique() %>% 
+  rename(sex = Sex_resolved)%>%
+  mutate(is_Female = ifelse(sex == "M", 0, ifelse(sex == "F", 1, NA))) %>% 
+  filter(!is.na(sex) & sex != "U")
+
+```
+
+## Read in binary capture data formatted for RMark use and join it with sex data. 
+
+```{r}
+
+capture <- read.csv("Binary_Capture_History.csv", colClasses = c('numeric', 'character'))
+
+capture <- right_join(capture, resolved_sex_data, 'PIT_TagCode')
+capture$sex <- as.factor(capture$sex)
+
+```
+
+## Run model with sex covariate
+
+Time Intervals
+
+```{r}
+
+# Intervals in days between primary periods
+time.intervals.1 <- c(0,0,33,0,0,54,0,0,271,0,0,32,0,0,55,0,0,299,0,0,25,0,0,26,0,0,320,0,0,26,0,0,26,0,0,278,0,0,19,0,0,26,0,0,26,0)
+
+# Months between primary periods
+time.intervals.4 <- time.intervals.1/30
+
+getwd()
+
+```
+
+Prep data and run model
+
+```{r}
+
+data_temp <- process.data(data = capture,
+                  model = "Robust",
+                  time.intervals = time.intervals.4,
+                  groups = c("sex")
+                 )
+
+design_data_temp <- make.design.data(data_temp)
+
+
+model_temp <- mark(data_temp, design_data_temp, model = "Robust",
+              model.parameters = list(
+                S = list(formula = ~time + sex),  
+                p = list(formula = ~session),
+                c = list(formula = ~session),
+                GammaPrime = list(formula = ~time),
+                GammaDoublePrime = list(formula = ~time)
+              ))
+
+N_temp <- model_temp$results$derived$`N Population Size`
+
+survival_temp <- model_temp$results$real[1:30, ]
+
+capture_estimates <- model_temp$results$real[grep("^p ", rownames(model_temp$results$real)), ]
+
+recapture_estimates <- model_temp$results$real[grep("^c ", rownames(model_temp$results$real)), ]
+
+?process.data()
+
+```
+
+
+```
