@@ -17,7 +17,6 @@ library(RMark)
 
 capture <- read.csv("Binary_Capture_History.csv", colClasses = c('numeric', 'character'))
 
-
 ```
 
 

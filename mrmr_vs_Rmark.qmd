@@ -1,0 +1,11 @@
+---
+title: "mrmr vs RMark"
+format: html
+editor: visual
+---
+
+# Model Assumptions
+
+### mrmr
+
+-   From Knapp et al. 2024: \* "For each translocation site, we estimated survival of translocated frogs, recruitment of new frogs into the adult population, and adult population size using a site-specific Bayesian open-population Jolly-Seber CMR model with known additions to the population (i.e., translocated cohorts), as implemented by the mrmr package [@joseph2019] and using R Statistical Software [@rsoftware2022] (v4.4.4) (see Supplementary Methods - Frog population recovery - CMR model structure for details). Briefly, the model tracks the states of M individuals that comprise a superpopulation made up of real and pseudo-individuals [@joseph2018]. The possible states of individuals include "not recruited", "alive", and "dead". The possible observations of individuals include "detected" and "not detected". We assume that individuals that are in the "not recruited" or "dead" states are never detected (i.e., there are no mistakes in the individual PIT tag records). We also assume that new recruits were the result of within-site reproduction and not immigration from adjacent populations. This assumption is justified by the fact that no R. sierrae populations were present within several kilometers of the translocation sites. For all models, we used mrmr defaults for priors, number of chains (4), and warmup and post-warmup iterations (2000 for each). We evaluated convergence of the Markov chain Monte Carlo (MCMC) algorithm using trace plots and Gelman-Rubin statistics (Rhat)."

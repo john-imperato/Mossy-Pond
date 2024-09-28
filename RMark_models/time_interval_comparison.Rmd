@@ -1,0 +1,103 @@
+---
+title: "RMark Parameters Revisited"
+output: html_document
+date: "2024-09-27"
+---
+
+
+
+```{r}
+
+library(RMark)
+library(dplyr)
+
+capture <- read.csv("Binary_Capture_History.csv", colClasses = c('numeric', 'character'))
+
+```
+
+## Time Intervals
+
+```{r}
+
+# Intervals in days between primary periods
+time.intervals.1 <- c(0,0,33,0,0,54,0,0,271,0,0,32,0,0,55,0,0,299,0,0,25,0,0,26,0,0,320,0,0,26,0,0,26,0,0,278,0,0,19,0,0,26,0,0,26,0)
+
+# Months between primary periods
+time.intervals.4 <- time.intervals.1/30
+
+
+```
+
+
+## Set Parameters
+
+```{r}
+
+
+
+
+```
+
+## Temporary Model for messing around
+
+```{r}
+
+data_temp <- process.data(data = capture,
+                  model = "Robust",
+                  time.intervals = time.intervals.1)
+
+design_data_temp <- make.design.data(data_temp)
+
+
+model_temp <- mark(data_temp, design_data_temp, model = "Robust",
+              model.parameters = list(
+                S = list(formula = ~time),  
+                p = list(formula = ~session),
+                c = list(formula = ~session),
+                GammaPrime = list(formula = ~time),
+                GammaDoublePrime = list(formula = ~time)
+                
+              ))
+
+N_temp <- model_temp$results$derived$`N Population Size`
+
+survival_temp <- model_temp$results$real[1:16, ]$estimate
+
+capture_estimates <- model_temp$results$real[grep("^p ", rownames(model_temp$results$real)), ]
+
+recapture_estimates <- model_temp$results$real[grep("^c ", rownames(model_temp$results$real)), ]
+
+
+```
+
+## Model 4: Detectability and capture probability vary by session, everything else by time
+
+```{r}
+
+M4data <- process.data(data = capture,
+                  model = "Robust",
+                  time.intervals = time.intervals.4)
+
+design_data <- make.design.data(M4data)
+
+mod4 <- mark(M4data, design_data, model = "Robust",
+              model.parameters = list(
+                S = list(formula = ~ time),  # Survival
+                p = list(formula = ~ session),  # Capture probability
+                c = list(formula = ~ session),  # Recapture probability
+                GammaPrime = list(formula = ~ time),  # Temporary emigration
+                GammaDoublePrime = list(formula = ~ time)  # Immigration
+              ))
+
+mod4_summary <- summary(mod4, transform = TRUE)
+
+N4 <- mod4$results$derived$`N Population Size`
+
+S4 <- mod4$results$real[1:16, ]$estimate
+
+
+```
+
+
+
+```
