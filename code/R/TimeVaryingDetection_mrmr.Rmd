@@ -4,9 +4,7 @@ output: html_document
 date: "2024-11-12"
 ---
 
-# Custom version of MLRG's mrmr package for mark-recapture data analysis
-
--   fit_model_custom() is a copy of mrmr's fit_model() function, changed only to call on a modified version of the underlying stan model.
+# Test my custom stan model with MLRG's public data from site 54188
 
     The modified stan model...
 
@@ -16,13 +14,16 @@ date: "2024-11-12"
         -   phi_est (phi, or survival probability, estimated for the whole population between primary periods)
 
 **Load packages**
-
 ```{r}
 library(cmdstanr)
 library(mrmr)
+library(ggplot2)
+library(ggpubr)
 ```
 
-**Custom version of mrmr::fit_model()**
+## Modify mrmr::fit_model()
+
+-   fit_model_custom() is a copy of mrmr::fit_model(), changed only to call on a modified version of the underlying stan model.
 
 ```{r}
 
@@ -61,7 +62,7 @@ fit_model_custom <- function(
   ...
 ) {
   # updated to use my custom stan model
-  stan_file <- "JI_custom_twostate.stan" # specify local path
+  stan_file <- "/Users/johnimperato/Desktop/Mossy-Pond/code/stan/JI_custom_twostate.stan" # specify local path
 
   model <- cmdstan_model(stan_file, ...)
 
@@ -108,46 +109,85 @@ fit_model_custom <- function(
 
 ```
 
+## Run 54188 data through my custom model
+
+**Load and clean data**
 ```{r}
+# set paths for 54188 captures and surveys
+captures <- read.csv("/Users/johnimperato/Desktop/Mossy-Pond/data/54188_capture.csv")  
+surveys <- read.csv("/Users/johnimperato/Desktop/Mossy-Pond/data/54188_survey.csv")   
 
-# set paths for Trapdoor captures and surveys
-captures <- read.csv("data/54188_capture.csv")  
-surveys <- read.csv("data/54188_survey.csv")   
-
-data_TVD_model <- mrmr::clean_data(captures, surveys)
+# run mrmr::clean_data()
+data_54188 <- mrmr::clean_data(captures, surveys)
 ```
 
 ```{r}
-
-# Fit the model using the custom function
-fit_result <- fit_model_custom(data_TVD_model,
+# Fit the custom model using the modified function
+custom_mod_54188 <- fit_model_custom(data_custom_mod_54188,
                                 chains = 3, 
                                 iter_sampling = 1000, 
                                 iter_warmup = 400)
 
-modTVD_summary <- fit_result$m_fit$summary()
-View(modTVD_summary)
+custom_mod_54188_summary <- custom_mod_54188$m_fit$summary()
+View(custom_mod_54188_summary)
 
-write.csv(modTVD_summary, "Trapdoor_custom_summary")
+write.csv(custom_mod_54188_summary, "54188_custom_mod_summary")
 
 ```
 
-**Now, run the classic mrmr model on the Trapdoor data to compare with my version**
+**Plot abundance and recruitment**
+```{r}
+
+trapdoor_custom_abundance_plot <- mrmr::plot_model(custom_mod_54188, "abundance")
+trapdoor_custom_recruitment_plot <- mrmr::plot_model(custom_mod_54188, "recruitment")
+
+# arrange plots together
+mrmr_custom_plots_54188 <- ggarrange(trapdoor_custom_abundance_plot, trapdoor_custom_recruitment_plot, ncol =1)
+
+# add title
+custom_annotated <- annotate_figure(mrmr_custom_plots_54188, top = text_grob("Time-Varying Detection mrmr", size = 14, face = "bold"))
+
+```
+
+## Run classic mrmr model on 54188 data 
 
 ```{r}
 
-# Fit the model using the custom function
-Trapdoor1_mrmr <- mrmr::fit_model(data_TVD_model,
+# Fit the model using mrmr's built in function
+classic_mod_54188 <- mrmr::fit_model(data_54188,
                                 chains = 3, 
                                 iter_sampling = 1000, 
                                 iter_warmup = 400)
 
-Trapdoor1_summary <- Trapdoor1_mrmr$m_fit$summary()
-View(Trapdoor1_summary)
+classic_mod_54188_summary <- classic_mod_54188$m_fit$summary()
+View(classic_mod_54188_summary)
 
-write.csv(Traodoor1_summary, "Trapdoor1_mrmr_summary.csv")
+write.csv(classic_mod_54188_summary, "54188_classic_mod_summary.csv")
 
-Trapdoor1_summary <- read.csv("Trapdoor1_mrmr_summary.csv")
-View(trapdoor_summary)
+plot_model(classic_mod_54188, "abundance")
+plot_model(classic_mod_54188, "recruitment")
+
+```
+
+**Plot abundance and recruitment**
+```{r}
+
+trapdoor_classic_abundance_plot <- mrmr::plot_model(classic_mod_54188, "abundance")
+trapdoor_classic_recruitment_plot <- mrmr::plot_model(classic_mod_54188, "recruitment")
+
+mrmr_classic_plots_54188 <- ggarrange(trapdoor_classic_abundance_plot, trapdoor_classic_recruitment_plot, ncol =1)
+
+# Add title
+classic_annotated <- annotate_figure(mrmr_classic_plots_54188, top = text_grob("Classic mrmr", size = 14, face = "bold"))
+
+```
+
+## Compare Model Output
+
+**Visual Comparison**
+```{r}
+
+abund_recruit_comparison_plot <- ggarrange(classic_annotated, custom_annotated, ncol=2)
+
 
 ```
