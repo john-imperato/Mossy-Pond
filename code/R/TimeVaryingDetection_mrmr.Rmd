@@ -4,19 +4,25 @@ output: html_document
 date: "2024-11-12"
 ---
 
+# Custom version of MLRG's mrmr package for mark-recapture data analysis
 
-**Here, I make a custom version of mrmr functons, aiming to get time-varying detection probability estimates. I updated the twostate.stan model to this end, and am now customizing mrmr's fit_model() function to use my updated stan model**
+-   fit_model_custom() is a copy of mrmr's fit_model() function, changed only to call on a modified version of the underlying stan model.
+
+    The modified stan model...
+
+    -   allows for independent session-varying estimates of frog detection probabilities
+    -   includes more parameter estimates in the generated quantities block
+        -   p (detection probability, varying by session)
+        -   phi_est (phi, or survival probability, estimated for the whole population between primary periods)
+
+**Load packages**
 
 ```{r}
-
 library(cmdstanr)
 library(mrmr)
-
 ```
 
-**Write custom version of mrmr::fit_model()**
-
-Change only line 53. Tell function to pull from my TVD_twostate.stan file 
+**Custom version of mrmr::fit_model()**
 
 ```{r}
 
@@ -55,7 +61,7 @@ fit_model_custom <- function(
   ...
 ) {
   # updated to use my custom stan model
-  stan_file <- "updated_twostate.stan" # specify new path
+  stan_file <- "JI_custom_twostate.stan" # specify local path
 
   model <- cmdstan_model(stan_file, ...)
 
@@ -102,8 +108,6 @@ fit_model_custom <- function(
 
 ```
 
-
-
 ```{r}
 
 # set paths for Trapdoor captures and surveys
@@ -130,7 +134,6 @@ write.csv(modTVD_summary, "Trapdoor_custom_summary")
 
 **Now, run the classic mrmr model on the Trapdoor data to compare with my version**
 
-
 ```{r}
 
 # Fit the model using the custom function
@@ -148,15 +151,3 @@ Trapdoor1_summary <- read.csv("Trapdoor1_mrmr_summary.csv")
 View(trapdoor_summary)
 
 ```
-
-
-
-
-
-
-
-
-
-
-
-
