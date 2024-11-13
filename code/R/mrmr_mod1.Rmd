@@ -1,0 +1,104 @@
+---
+title: "Mossy_mrmr_model"
+output: html_document
+date: "2024-09-12"
+---
+
+Load packages 
+
+```{r}
+
+library(dplyr)
+library(readr)
+library(tibble)
+library(rstan)
+library(mrmr)
+
+```
+
+
+Load capture data and format 'captures' data frame
+
+```{r}
+
+# Load .csv of all captures from the Mossy Pond CMR study period
+captures <- read.csv("Capture_Data.csv")
+
+# Remove "00:00:00 EDT" from Date column for compatibility with mrmr 
+captures$Date <- gsub("00:00:00 EDT","", captures$Date)
+
+# Convert 'Date' variable to date object class 
+captures$Date <- as.Date(captures$Date, format = "%a %b %d  %Y")
+
+# Change variable names for compatibility with mrmr 
+names(captures)[names(captures) == "Date"] <- "survey_date"
+names(captures)[names(captures) == "PIT_TagCode"] <- "pit_tag_id"
+
+# Change data types for compatibility with mrmr
+captures$survey_date <- as.character(captures$survey_date)
+captures$pit_tag_id <- as.character(captures$pit_tag_id)
+
+# Remove the single dead frog observation (instead, use it to create a 'removals' data frame)
+captures <- captures[captures$frog_state != "dead", ]
+
+```
+
+
+Load survey date data and format 'surveys' data frame
+
+```{r}
+
+# load surveys .csv I made externally (manually in excel...)
+surveys <- read.csv("survey.csv")
+
+# change data types for compatibility with mrmr
+surveys$survey_date <- as.character(surveys$survey_date)
+surveys$primary_period <- as.integer(surveys$primary_period)
+surveys$secondary_period <- as.integer(surveys$secondary_period)
+
+```
+
+
+Load capture data and format 'removals' data frame
+
+```{r}
+
+removals <- read.csv("Capture_Data.csv")
+  
+removals <- removals[removals$frog_state == "dead", ]
+
+# Remove "00:00:00 EDT" from Date column for compatibility with 'mrmr' 
+removals$Date <- gsub("00:00:00 EDT","", removals$Date)
+
+# Convert 'Date' variable to object class date
+removals$Date <- as.Date(removals$Date, format = "%a %b %d  %Y")
+
+# Change variable names for compatibility with 'mrmr' 
+names(removals)[names(removals) == "Date"] <- "removal_date"
+names(removals)[names(removals) == "PIT_TagCode"] <- "pit_tag_id"
+
+removals$survey_date <- as.character(removals$removal_date)
+removals$pit_tag_id <- as.character(removals$pit_tag_id)
+
+
+```
+
+
+Run the clean_data function and fit the model
+
+```{r}
+
+# run the clean_data function
+mrmr_mossy_mod1_data <- clean_data(captures, surveys, removals = removals)
+
+# fit the model
+mrmr_mossy_mod1 <- fit_model(mrmr_mossy_mod1_data,
+                                chains = 3, 
+                                iter_sampling = 1000, 
+                                iter_warmup = 400)
+
+# save the model fit summary to an object
+mod1_summary <- mrmr_mossy_mod1$m_fit$summary()
+view(mod1_summary)
+
+```
