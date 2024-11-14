@@ -238,6 +238,7 @@ generated quantities {
   }
   
   // Calculate phi for each primary period
+    // NEED TO CONFIRM FIRST AND LAST PHI ESTIMATES ARE BOUNDARY CONDITIONS
   for (t in 2:(T - 1)) {
     phi_est[t - 1] = inv_logit(beta_phi[1] + eps_phi[t]); // Adjust indexing to store values in phi_est (drops boundary conditions(?))
   }
