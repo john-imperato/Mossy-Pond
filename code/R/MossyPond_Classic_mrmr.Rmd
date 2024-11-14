@@ -23,7 +23,7 @@ Load capture data and format 'captures' data frame
 ```{r}
 
 # Load .csv of all captures from the Mossy Pond CMR study period
-captures <- read.csv("Capture_Data.csv")
+captures <- read.csv("/Users/johnimperato/Documents/Capture_Data.csv")
 
 # Remove "00:00:00 EDT" from Date column for compatibility with mrmr 
 captures$Date <- gsub("00:00:00 EDT","", captures$Date)
@@ -47,9 +47,11 @@ captures <- captures[captures$frog_state != "dead", ]
 ### captures <- unique(captures[ , c(2,3,5,7)])
   # when I create this subset, 5 observations disappear
   # This subset didn't work. Lets try getting rid of CA lake id column
-captures <- unique(captures[ , c(3,5,7)])
+captures <- unique(captures[ , c(3,5)])
   # another 2 observations disappeared
 # I have not yet run this model
+
+
 
 ```
 
