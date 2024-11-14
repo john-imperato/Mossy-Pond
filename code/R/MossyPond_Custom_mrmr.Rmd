@@ -1,0 +1,48 @@
+---
+title: "Mossy_custom_mrmr"
+output: html_document
+date: "2024-11-13"
+---
+
+# Run my custom mrmr model with Mossy Pond data
+
+```{r}
+library(mrmr)
+```
+
+**Load and format data**
+
+```{r}
+getwd()
+surveys <- read.csv("/Users/johnimperato/Desktop/Mossy-Pond/data/survey_MossyPond.csv")
+captures <- read.csv("/Users/johnimperato/Documents/private_MP_data/captures_MP.csv")
+
+mp_custom_data <- mrmr::clean_data(captures, surveys)
+  
+```
+
+**Fit the custom model to MP data and summarize**
+
+```{r}
+
+# Fit the custom model using the modified function
+custom_mod_MP <- fit_model_custom(mp_custom_data,
+                                chains = 3, 
+                                iter_sampling = 1000, 
+                                iter_warmup = 400)
+
+custom_mod_mp_summary <- custom_mod_MP$m_fit$summary()
+View(custom_mod_mp_summary)
+
+write.csv(custom_mod_mp_summary, "/Users/johnimperato/Documents/mp_custom_mod_summary")
+
+
+```
+
+```{r}
+
+abundance_MP_custom <- mrmr::plot_model(custom_mod_MP, "abundance")
+recruitment_MP_custom <- mrmr::plot_model(custom_mod_MP, "recruitment")
+
+```
+
