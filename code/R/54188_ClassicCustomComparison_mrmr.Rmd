@@ -4,27 +4,29 @@ output: html_document
 date: "2024-11-12"
 ---
 
-# Model Comparison 
+# Model Comparison
 
-**Classic mrmr model vs. modified mrmr model**
+**Classic mrmr model vs. custom mrmr model**
 
-    The modified model...
+The custom model...
 
-    -   allows for independent session-varying estimates of frog detection probabilities
-    -   includes more parameter estimates in the generated quantities block
-        -   p (detection probability, varying by session)
-        -   phi_est (phi, or survival probability, estimated for the whole population between primary periods)
+-   allows for independent session-varying estimates of frog detection probabilities
+-   includes more parameter estimates in the generated quantities block
+    -   p (detection probability, varying by session)
+    -   phi_est (phi, or survival probability, estimated for the whole population between primary periods)
 
 **Load packages**
+
 ```{r}
 library(cmdstanr)
 library(mrmr)
 library(ggpubr)
 ```
 
-## Run 54188 data through my custom model
+## Run 54188 data through custom model
 
 **Load and clean data**
+
 ```{r}
 # set paths for 54188 captures and surveys
 captures <- read.csv("/Users/johnimperato/Desktop/Mossy-Pond/data/54188_capture.csv")  
@@ -34,21 +36,26 @@ surveys <- read.csv("/Users/johnimperato/Desktop/Mossy-Pond/data/54188_survey.cs
 data_54188 <- mrmr::clean_data(captures, surveys)
 ```
 
+**Fit the custom model**
+
 ```{r}
 # Fit the custom model using the modified function
-custom_mod_54188 <- fit_model_custom(data_custom_mod_54188,
+custom_mod_54188 <- fit_model_custom(data_54188,
                                 chains = 3, 
                                 iter_sampling = 1000, 
                                 iter_warmup = 400)
 
+# create and view model summary
 custom_mod_54188_summary <- custom_mod_54188$m_fit$summary()
 View(custom_mod_54188_summary)
 
+# save results to .csv file
 write.csv(custom_mod_54188_summary, "54188_custom_mod_summary")
 
 ```
 
 **Plot abundance and recruitment**
+
 ```{r}
 
 trapdoor_custom_abundance_plot <- mrmr::plot_model(custom_mod_54188, "abundance")
@@ -62,7 +69,7 @@ custom_annotated <- annotate_figure(mrmr_custom_plots_54188, top = text_grob("Ti
 
 ```
 
-## Run classic mrmr model on 54188 data 
+## Run classic mrmr model on 54188 data
 
 ```{r}
 
@@ -83,6 +90,7 @@ plot_model(classic_mod_54188, "recruitment")
 ```
 
 **Plot abundance and recruitment**
+
 ```{r}
 
 trapdoor_classic_abundance_plot <- mrmr::plot_model(classic_mod_54188, "abundance")
@@ -98,6 +106,7 @@ classic_annotated <- annotate_figure(mrmr_classic_plots_54188, top = text_grob("
 ## Compare Model Output
 
 **Visual Comparison**
+
 ```{r}
 
 abund_recruit_comparison_plot_54188 <- ggarrange(classic_annotated, custom_annotated, ncol=2)
