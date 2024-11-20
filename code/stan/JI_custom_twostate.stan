@@ -259,7 +259,7 @@ for (i in 1:M) {
     // Calculate log-likelihood for individual i
     log_lik[i] = log(sum(forward_probabilities[T, :]));
   }
-}
+
   
   {
     array[3, T, 3] real ps;
