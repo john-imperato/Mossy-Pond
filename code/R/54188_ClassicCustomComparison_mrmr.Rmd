@@ -4,7 +4,7 @@ output: html_document
 date: "2024-11-12"
 ---
 
-# Mrmr Model Comparison
+# mrmr Model Comparison
 
 **Classic mrmr model** (fixed detection probability)
 
@@ -14,7 +14,7 @@ vs.
 
 ## Introduction
 
-The R package mrmr serves as an interface to prepare data and run population models. It relies on a site-specific multi-state Bayesian open-population Jolly-Seber CMR model (hereafter referred to as the multi-state model) for the mathematical and computational part of model fitting.The multi-state model is written in the Stan programming language, which is designed for probabilistic modeling and Bayesian inference. The 'changes to mrmr' outlined in this report are primarily changes to the multi-state model, via modifications to the Stan code. The Stan code is not included in this report. Instead, changes are described using the English language. Snippets of essential Stan code are provided, when necessary, in *italics*, following the format (*classic model code*) —\> (*custom model code*).
+The R package mrmr serves as an interface to prepare data and run population models. It relies on a site-specific multi-state Bayesian open-population Jolly-Seber CMR model (hereafter referred to as the multi-state model) for the mathematical and computational part of model fitting.The multi-state model is written in the Stan programming language, which is designed for probabilistic modeling and Bayesian inference. The 'changes to mrmr' outlined in this report are primarily changes to the multi-state model, via modifications to the Stan code. The Stan file is not included in this report. Instead, changes are described using the English language. Snippets of essential Stan code are provided, when necessary, in *italics*, following the format (*classic model Stan code*) —\> (*custom model Stan code*).
 
 The multi-state model is composed of seven blocks:
 
@@ -44,9 +44,9 @@ Both the classic and custom models include changes to the generated quantities b
 
 3.  p - detection probability, estimated for each session (secondary period). In the classic model, p is fixed so the estimate is identical for each session. In the custom model, p is estimated independently for each session (time-varying detection probabilities).
 
-4.  phi_est - survival probability, estimated between primary periods for the whole population. phi_est[1] is the collective estimated survival probability between the first and second primary periods, phi_est[2] between the second and third, and so on.\*
+4.  phi_est - survival probability, estimated between primary periods for the whole population. phi_est[1] is the collective estimated survival probability between the first and second primary periods, phi_est[2] between the second and third, etc.\*
 
-    -   \*I need to confirm my suspicion that the model generates "boundary estimates" for phi (an estimate before the first primary period, and after the last primary period). I am currently operating under this assumption. If I can't confirm this by myself, maybe I can ask Max.
+    -   \*I need to confirm my assumption that the model generates "boundary estimates" for phi (an estimate before the first primary period, and after the last primary period). If I can't confirm this by myself, maybe I can ask Max.
 
 5.  log_lik - log of the likelihood, calculated for each individual, real and pseudo. Likelihood is the probability of observing an individual's capture history given the model parameters. Pseudo-individuals don't actually have a capture histories, so their log_lik values are all identical. See the 'Compare Model Fit' section of this report for more information about this quantity.
 
@@ -74,7 +74,7 @@ This analysis uses capture-mark-recapture (CMR) data for a population of endange
 
 ## Analysis
 
-This section describes the analysis performed to compare the classic and custom models. Both models were fit to the same capture-mark-recapture (CMR) data for the Sierra Nevada yellow-legged frog population at site 54188. Key comparisons include estimates of population abundance (N), recruitment (B), detection probability (p), and survival (phi). To evaluate model performance, I used the **leave-one-out cross-validation (LOO)** method, which assesses model fit while penalizing complexity.
+This section describes the analysis performed to compare the classic and custom models. Both models were fit to the same CMR data for the Sierra Nevada yellow-legged frog population at site 54188. Key comparisons include estimates of population abundance (N), recruitment (B), detection probability (p), and survival (phi). To evaluate model performance, I used the leave-one-out cross-validation (LOO) method, which assesses model fit while penalizing complexity.
 
 The goal of this analysis is to determine whether the custom model, with independent, time-varying estimates of detection probability, provides a significantly better fit to the data compared to the classic model, which assumes detection probability is constant across sessions. Differences in model performance will be interpreted using the LOO expected log predictive density (ELPD) values, along with associated uncertainty estimates.
 
@@ -104,7 +104,12 @@ data_54188 <- mrmr::clean_data(captures, surveys)
 
 ### Fit the Custom Model
 
+The fit_model_custom( ) function is identical to mrmr's built in fit_model( ) function, except it draws on the custom .stan file on my local machine, rather than the standard mrmr .stan file. The custom .stan file includes the previously described changes to the parameters, transformed parameters, and generated quantities block.
+
 ```{r}
+# load the modified fit_model function
+source("custom_fit_model_function.R")
+
 # Fit the custom model using the modified function
 custom_mod_54188 <- fit_model_custom(data_54188,
                                 chains = 3, 
@@ -137,9 +142,13 @@ custom_annotated <- annotate_figure(mrmr_custom_plots_54188, top = text_grob("Ti
 
 ### Fit the classic model
 
+The fit_model_classic( ) function is identical to mrmr's built in fit_model( ) function, except it draws on a modified .stan file on my local machine, rather than the standard mrmr .stan file. The modified .stan file includes the previously described changes to the generated quantities block.
+
 ```{r}
+source("classic_fit_model_function.R")
+
 # Fit the model using mrmr's built in function
-classic_mod_54188 <- fit_model_classic_loglik(data_54188,
+classic_mod_54188 <- fit_model_classic(data_54188,
                                 chains = 3, 
                                 iter_sampling = 1000, 
                                 iter_warmup = 400)
