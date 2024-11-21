@@ -4,39 +4,25 @@ output: html_document
 date: "2024-11-12"
 ---
 
-# mrmr Model Comparison
+# mrmr Modifications 
 
-**Classic mrmr model** (fixed detection probability)
+# and 
 
-vs.
-
-**Custom mrmr model** (independent, time-varying detection probabilities)
+# Model Comparison
 
 ## Introduction
 
-The R package mrmr serves as an interface to prepare data and run population models. It relies on a site-specific multi-state Bayesian open-population Jolly-Seber CMR model (hereafter referred to as the multi-state model) for the mathematical and computational part of model fitting.The multi-state model is written in the Stan programming language, which is designed for probabilistic modeling and Bayesian inference. The 'changes to mrmr' outlined in this report are primarily changes to the multi-state model, via modifications to the Stan code. The Stan file is not included in this report. Instead, changes are described using the English language. Snippets of essential Stan code are provided, when necessary, in *italics*, following the format (*classic model Stan code*) —\> (*custom model Stan code*).
+The R package mrmr serves as an interface to prepare data and run population models. It relies on a site-specific multi-state Bayesian open-population Jolly-Seber CMR model (hereafter referred to as the multi-state model) for the mathematical and computational part of model fitting. The multi-state model is written in the Stan programming language, which is designed for probabilistic modeling and Bayesian inference.
 
-The multi-state model is composed of seven blocks:
+This report describes modifications to the multi-state model, each of which can be categorized as either 'cosmetic' or 'substantive.' Cosmetic changes are those that do not not affect how the model runs or the values of its parameter estimates. Substantive changes do affect how the model runs and the values of parameter estimates.
 
-1.  Functions - handle repeated calculations. Key functions are forward_prob( ) and partial_sum_lpmf( ).
+These modifications are embodied by a 'classic model' and a 'custom model.' The models are named relative to the original multi-state model published in the R package mrmr. The classic model includes only cosmetic changes relative to the original, and the custom model includes both cosmetic and substantive changes.
 
-2.  Data - specifies input data.
-
-3.  Transformed Data
-
-4.  **Parameters** - declared the parameters the model will estimate.
-
-5.  **Transformed parameters**
-
-6.  Model - defines the statistical model and specifies the priors.
-
-7.  **Generated quantities** - calculates quantities after the model is fit, used for interpretation and diagnostics.
-
-This report focuses on changes made to three of those blocks: generates quantities, parameters, and transformed parameters. Those changes, and their functionality, are outlined below.
+To understand the cosmetic and substantive nature of those changes, it is helpful to know that the multi-state Stan model is composed of seven **code blocks**: functions, data, transformed data, parameters, transformed parameters, model, and generated quantities. Changes made to the generated quantities block are cosmetic. Changes to any other block are substantive. This report details changes within the **generated quantities, parameters,** and **transformed parameters** blocks, as described in the next three sections.
 
 ### Generated Quantities Block
 
-Both the classic and custom models include changes to the generated quantities block of mrmr's underlying Stan model. The generated quantities block is composed of post-hoc computations based on the model's parameters after it has finished fitting the data. Changes to this block do not affect how the model runs or the estimated parameter values. The generated quantities blocks of both the custom and classic model are identical. Generated quantities include:
+Both the classic and custom models include changes to the generated quantities block of mrmr's underlying Stan model. The generated quantities block is composed of post-hoc computations based on the model's parameters after it has finished fitting the data. Changes to this block are cosmetic and do not affect how the model runs or the estimated parameter values. The generated quantities blocks of both the custom and classic model are identical. Generated quantities include:
 
 1.  N - total abundance, estimated for each primary period.
 
@@ -46,17 +32,17 @@ Both the classic and custom models include changes to the generated quantities b
 
 4.  phi_est - survival probability, estimated between primary periods for the whole population. phi_est[1] is the collective estimated survival probability between the first and second primary periods, phi_est[2] between the second and third, etc.\*
 
-    -   \*I need to confirm my assumption that the model generates "boundary estimates" for phi (an estimate before the first primary period, and after the last primary period). If I can't confirm this by myself, maybe I can ask Max.
+    -   \*I need to confirm my assumption that the model generates "boundary estimates" for phi (an estimate before the first primary period and after the last primary period). If I can't confirm this by myself, maybe I can ask Max.
 
-5.  log_lik - log of the likelihood, calculated for each individual, real and pseudo. Likelihood is the probability of observing an individual's capture history given the model parameters. Pseudo-individuals don't actually have a capture histories, so their log_lik values are all identical. See the 'Compare Model Fit' section of this report for more information about this quantity.
+5.  log_lik - log of the likelihood, calculated for each individual, real and pseudo. Likelihood is the probability of observing an individual's capture history given the model parameters. Pseudo-individuals don't actually have a capture histories, so their log_lik values are all identical. See the Compare Model Fit section of this report for more information about this quantity.
 
 ### Parameters Block
 
-(*vector[m_detect] beta_detect;*) —\> (*vector[Jtot] beta_detect;*)
+*vector[m_detect] beta_detect;* —\> *vector[Jtot] beta_detect;*
 
-This change is essential to achieving independent, time-varying estimates of detection probability in the custom model.
+This substantive change is essential to achieving independent, time-varying estimates of detection probability in the custom model.
 
-**beta_detect** is a vector of parameters that represent the logit-scale detection probability for survey sessions. The classic mrmr model defines beta_detect as a vector of size m_detect. m_detect refers to the number of detection covariates. The custom model defines beta_detect as a vector of size Jtot. Jtot refers to the total number of survey sessions. Each entry in the vector now corresponds to a specific survey session (custom) rather than a covariate (classic).
+**beta_detect** is a vector of parameters that represent the logit-scale detection probability for survey sessions. The classic mrmr model defines beta_detect as a vector of size m_detect. m_detect refers to the number of detection covariates. The custom model defines beta_detect as a vector of size Jtot. Jtot refers to the total number of survey sessions. Each entry in the vector in the custom model corresponds to a specific survey session rather than a covariate, as in the classic model.
 
 Meaning is assigned to beta_detect in the functions block via the transformed parameter logit_detect, within the forward_prob( ) function. No changes were made to this function.
 
@@ -64,19 +50,19 @@ Meaning is assigned to beta_detect in the functions block via the transformed pa
 
 (*logit_detect = X_detect \* beta_detect;*) —\> (*logit_detect = beta_detect;*)
 
-In the classic model, logit_detect is derived from beta_detect using the design matrix of covariates x_detect. This ties detection probabilities to shared covariates. In the custom model, logit_detect is assigned directly to beta_detect, making each session's detection probability independent.
+In the classic model, logit_detect is derived from beta_detect using the design matrix of covariates X_detect. This ties detection probabilities to shared covariates. In the custom model, logit_detect is assigned directly to beta_detect, making each session's detection probability independent.
 
-Changes to the parameters and transformed parameters blocks reflect a purpose to obtain the most accurate estimates of N, B, p, and phi for the collective population. The classic model reflect a purpose to model detection and survival by covariates, which makes sense in the context of Knapp and Joseph (2018). If and when I want to introduce covariates into my analysis, I will need to revisit this section. (I'm not sure if it is possible to include both covariates in the design matrix and indepentent, session-specific detection.)
+Changes to the parameters and transformed parameters blocks are substantive and aim for the most accurate estimates of N, B, p, and phi for the population as a whole. The classic version aims to model detection and survival by climate and disease-related covariates, which makes sense in the context of Knapp and Joseph (2018). If and when I want to introduce covariates into my analysis, I will need to revisit this section. (I'm not sure if it is possible to include both covariates in the design matrix and indepentent, session-specific detection.)
 
 ## The Data
 
-This analysis uses capture-mark-recapture (CMR) data for a population of endangered Sierra Nevada yellow-legged frogs (*Rana sierrae*) in the Sierra National Forest, California. This population is referred to by the numeric site id of its associated water body, 54188. The data set is publicly available from the Mountain Lakes Research Group.
+The analysis in this report uses capture-mark-recapture (CMR) data for a population of endangered Sierra Nevada yellow-legged frogs (*Rana sierrae*) in the Sierra National Forest, California. This population is referred to by the numeric site id of its associated water body, 54188. The data set is publicly available from the Mountain Lakes Research Group.
 
 ## Analysis
 
-This section describes the analysis performed to compare the classic and custom models. Both models were fit to the same CMR data for the Sierra Nevada yellow-legged frog population at site 54188. Key comparisons include estimates of population abundance (N), recruitment (B), detection probability (p), and survival (phi). To evaluate model performance, I used the leave-one-out cross-validation (LOO) method, which assesses model fit while penalizing complexity.
+This section describes the analysis performed to compare the classic and custom models. Both models were fit to the same CMR data, described in the previous section. Key comparisons include estimates of population abundance (N), recruitment (B), detection probability (p), and survival (phi). To evaluate model performance, I used the leave-one-out (LOO) cross-validation method, which assesses model fit while penalizing complexity.
 
-The goal of this analysis is to determine whether the custom model, with independent, time-varying estimates of detection probability, provides a significantly better fit to the data compared to the classic model, which assumes detection probability is constant across sessions. Differences in model performance will be interpreted using the LOO expected log predictive density (ELPD) values, along with associated uncertainty estimates.
+The goal of this analysis is to determine whether the custom model, with independent, time-varying estimates of detection probability, provides a significantly better fit to the data compared to the classic model, which assumes detection probability is constant across sessions. Differences in model performance will be interpreted using the LOO expected log predictive density (elpd) values, along with associated uncertainty estimates.
 
 Results and interpretations for each parameter and the overall model comparison are detailed in the following subsections.
 
@@ -104,7 +90,7 @@ data_54188 <- mrmr::clean_data(captures, surveys)
 
 ### Fit the Custom Model
 
-The fit_model_custom( ) function is identical to mrmr's built in fit_model( ) function, except it draws on the custom .stan file on my local machine, rather than the standard mrmr .stan file. The custom .stan file includes the previously described changes to the parameters, transformed parameters, and generated quantities block.
+The fit_model_custom( ) function is identical to mrmr's built in fit_model( ) function, except it draws on the custom .stan file on my local machine, rather than the standard mrmr .stan file. The custom .stan file includes the previously described changes to the parameters, transformed parameters, and generated quantities blocks.
 
 ```{r}
 # load the modified fit_model function
@@ -118,7 +104,7 @@ custom_mod_54188 <- fit_model_custom(data_54188,
 
 # create and view model summary
 custom_mod_54188_summary <- custom_mod_54188$m_fit$summary()
-View(custom_mod_54188_summary)
+print(custom_mod_54188_summary)
 
 # save results to .csv file
 write.csv(custom_mod_54188_summary, "54188_custom_mod_summary")
@@ -155,7 +141,7 @@ classic_mod_54188 <- fit_model_classic(data_54188,
 
 # create and view summary
 classic_mod_54188_summary <- classic_mod_54188$m_fit$summary()
-View(classic_mod_54188_summary)
+print(classic_mod_54188_summary)
 
 # save summary to .csv file
 write.csv(classic_mod_54188_summary, "54188_classic_mod_summary.csv")
