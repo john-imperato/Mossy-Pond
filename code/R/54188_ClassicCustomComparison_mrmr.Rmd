@@ -84,7 +84,7 @@ write.csv(custom_mod_54188_summary, "54188_custom_mod_summary")
 
 **Plot abundance and recruitment**
 
-with mrmr's built-in plotting functionality.
+...with mrmr's built-in plotting functionality.
 
 ```{r}
 trapdoor_custom_abundance_plot <- mrmr::plot_model(custom_mod_54188, "abundance")
@@ -117,7 +117,7 @@ write.csv(classic_mod_54188_summary, "54188_classic_mod_summary.csv")
 
 **Plot abundance and recruitment**
 
-with mrmr's built-in plotting functionality.
+...with mrmr's built-in plotting functionality.
 
 ```{r}
 trapdoor_classic_abundance_plot <- mrmr::plot_model(classic_mod_54188, "abundance")
@@ -164,7 +164,7 @@ print(GenQuant_comparison)
 
 **Visually compare abundance and recruitment estimates between models**
 
-Axes are not standardized, which limits comparison value.
+Note that axes are not standardized.
 
 ```{r}
 # visual comparison of abundance and recruitment plots
@@ -178,7 +178,7 @@ Use leave-one-out (LOO) cross-validation, a standard method to calculate the pre
 
 -   LOO cross-validation uses log likelihood values, which now appear in the model summary as generated quantities, to evaluate how well the model predicts each data point when that point is left out of the fitting process. Likelihood, calculated at the individual level, is the probability of observing the data (in this case, an individual frog's capture history) given the model parameters.
 
-The loo( ) function generates an expected log predictive density (elpd) value for each model. The loo_compare( ) function ranks models based on their elpd values and calculates the difference in those values. A difference of 2-3x the standard error is generally considered significant in a LOO comparison. In this case, the elpd_diff value is 2.95x the standard error, suggesting that the custom mrmr model fits the Trapdoor data significantly better than the classic model.
+The loo( ) function generates an expected log predictive density (elpd) value for each model. The loo_compare( ) function ranks models based on their elpd values, with the best fit listed first, and calculates the difference in those values. A difference of 2-3x the standard error is generally considered significant in a LOO comparison.
 
 ```{r}
 loo_classic <- classic_mod_54188$m_fit$loo()
@@ -188,5 +188,21 @@ loo_custom <- custom_mod_54188$m_fit$loo()
 loo_compare <- loo::loo_compare(loo_classic, loo_custom)
 
 print(loo_compare)
+
+# extract elpd_diff and se_diff for model1
+elpd_diff_model1 <- loo_compare["model1", "elpd_diff"]
+se_diff_model1 <- loo_compare["model1", "se_diff"]
+
+# calculate significance ratio
+result <- elpd_diff_model1 / se_diff_model1
+
+# interpret
+if (abs(result) > 2) {
+  cat("Result of elpd_diff / se_diff for model1:", result, "\n")
+  cat("The custom model fits the data significantly better than the classic model.\n")
+} else {
+  cat("Result of elpd_diff / se_diff for model1:", result, "\n")
+  cat("The custom model does not fit the data significantly better than the classic model.\n")
+}
 
 ```
