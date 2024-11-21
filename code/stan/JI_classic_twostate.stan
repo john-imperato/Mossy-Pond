@@ -223,11 +223,26 @@ generated quantities {
   int<lower=0> Nsuper; // Superpopulation size
   array[Tm1] int<lower=0> N; // Actual population size
   array[Tm1] int<lower=0> B; // Number of entries
-  // IMPERATO_2024NOV20 generate log likelihood for each individual
-  vector[M] log_lik;  // Log-likelihood for each individual
+// IMPERATO_2024NOV11  generate p and phi quantities
+    // Detection probability by survey
+  vector[Jtot] p;
+    // Survival probability by primary period
+  vector[T - 2] phi_est; 
+// IMPERATO_2024NOV20 generate log_lik quantity for each individual 
+  vector[M] log_lik; 
   
-  // IMPERATO_2024NOV20 generate log likelihood for each individual
-  for (i in 1:M) {
+  // Calculate p as the inverse logit of logit_detect for each session
+  for (j in 1:Jtot) {
+    p[j] = inv_logit(logit_detect[j]);
+  }
+  
+  // Calculate phi for each primary period
+    // NEED TO CONFIRM FIRST AND LAST PHI ESTIMATES ARE BOUNDARY CONDITIONS
+  for (t in 2:(T - 1)) {
+    phi_est[t - 1] = inv_logit(beta_phi[1] + eps_phi[t]); // Adjust indexing to store values in phi_est (drops boundary conditions(?))
+  }
+  
+for (i in 1:M) {
     matrix[T, 3] forward_probabilities;
 
     // Compute forward probabilities for individual i
@@ -240,6 +255,7 @@ generated quantities {
     // Calculate log-likelihood for individual i
     log_lik[i] = log(sum(forward_probabilities[T, :]));
   }
+
   
   {
     array[3, T, 3] real ps;
