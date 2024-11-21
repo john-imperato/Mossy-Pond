@@ -62,11 +62,11 @@ Meaning is assigned to beta_detect in the functions block via the transformed pa
 
 ### Transformed Parameters Block
 
-*logit_detect = X_detect \* beta_detect;* —\> *logit_detect = beta_detect;*
+(*logit_detect = X_detect \* beta_detect;*) —\> (*logit_detect = beta_detect;*)
 
 In the classic model, logit_detect is derived from beta_detect using the design matrix of covariates x_detect. This ties detection probabilities to shared covariates. In the custom model, logit_detect is assigned directly to beta_detect, making each session's detection probability independent.
 
-Changes to the parameters and transformed parameters blocks reflect a purpose to obtain the most accurate estimates of N, B, p, and phi for the collective population. The classic model seems to reflect a purpose to model detection and survival by covariates, which makes sense in the context of its original purpose, described by Knapp and Joseph (2018). If and when I want to introduce covariates into my analysis, I will need to revisit this section. (I'm not sure if it is possible to include both covariates in the design matrix and indepentent, session-specific detection.)
+Changes to the parameters and transformed parameters blocks reflect a purpose to obtain the most accurate estimates of N, B, p, and phi for the collective population. The classic model reflect a purpose to model detection and survival by covariates, which makes sense in the context of Knapp and Joseph (2018). If and when I want to introduce covariates into my analysis, I will need to revisit this section. (I'm not sure if it is possible to include both covariates in the design matrix and indepentent, session-specific detection.)
 
 ## The Data
 
@@ -74,9 +74,13 @@ This analysis uses capture-mark-recapture (CMR) data for a population of endange
 
 ## Analysis
 
-This analysis serves to...
+This section describes the analysis performed to compare the classic and custom models. Both models were fit to the same capture-mark-recapture (CMR) data for the Sierra Nevada yellow-legged frog population at site 54188. Key comparisons include estimates of population abundance (N), recruitment (B), detection probability (p), and survival (phi). To evaluate model performance, I used the **leave-one-out cross-validation (LOO)** method, which assesses model fit while penalizing complexity.
 
-Load packages
+The goal of this analysis is to determine whether the custom model, with independent, time-varying estimates of detection probability, provides a significantly better fit to the data compared to the classic model, which assumes detection probability is constant across sessions. Differences in model performance will be interpreted using the LOO expected log predictive density (ELPD) values, along with associated uncertainty estimates.
+
+Results and interpretations for each parameter and the overall model comparison are detailed in the following subsections.
+
+**Load packages**
 
 ```{r}
 library(cmdstanr)
