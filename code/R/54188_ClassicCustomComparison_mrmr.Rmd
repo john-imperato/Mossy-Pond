@@ -4,39 +4,67 @@ output: html_document
 date: "2024-11-12"
 ---
 
-# Model Comparison
+# Mrmr Model Comparison
 
-**Classic mrmr model vs. custom mrmr model**
+**Classic mrmr model** (fixed detection probability)
 
-The custom model...
+vs.
 
--   allows for independent session-varying estimates of frog detection probabilities
--   includes more parameter estimates in the generated quantities block
-    -   p (detection probability, varying by session)
-    -   phi_est (phi, or survival probability, estimated for the whole population between primary periods)
+**Custom mrmr model** (independent, time-varying detection probabilities)
 
-**Load packages**
+## Introduction
+
+### Generated Quantities Block
+
+Both the classic and custom models include changes to the generated quantities block of mrmr's underlying Stan model. The generated quantities block is composed of post-hoc computations based on the model's parameters after it has finished fitting the data. Changes to this block do not affect how the model runs or the estimated parameter values. The generated quantities blocks of both the custom and classic model are identical. Generated quantities include:
+
+1.  N - total abundance, estimated for each primary period. Included in the standard mrmr model.
+
+2.  B - number of adults recruited into the population, estimated for each primary period. Included in the standard mrmr model.
+
+3.  p - detection probability, estimated for each session (secondary period). In the classic model, p is fixed so the estimate is identical for each session. In the custom model, p is estimated independently for each session (time-varying detection probabilities).
+
+4.  phi_est - survival probability, estimated between primary periods for the whole population. phi_est[1] is the collective estimated survival probability between the first and second primary periods, phi_est[2] between the second and third, and so on.\*
+
+    -   \*I need to confirm my suspicion that the model generates "boundary estimates" for phi (an estimate before the first primary period, and after the last primary period). I am currently operating under this assumption. If I can't confirm this by myself, maybe I can ask Max.
+
+5.  log_lik - log of the likelihood, calculated for each individual, real and pseudo. Likelihood is the probability of observing an individual's capture history given the model parameters. Pseudo-individuals don't actually have a capture histories, so their log_lik values are all identical. See the 'Compare Model Fit' section of this report for more information about this quantity.
+
+### Other Blocks...
+
+The custom mrmr model calls upon a Stan file that is modified from the classic mrmr Stan file. Compared to the classic, the modified Stan file...
+
+1.  allows for independent, session-varying estimates of frog detection probabilities
+
+### The data
+
+This analysis uses capture-mark-recapture (CMR) data for a population of endangered Sierra Nevada yellow-legged frogs (*Rana sierrae*) in the Sierra National Forest, California. This population is referred to by the numeric site id of its associated water body, 54188. The data set is publicly available from the Mountain Lakes Research Group.
+
+## Run Models
+
+Load packages
 
 ```{r}
 library(cmdstanr)
 library(mrmr)
 library(ggpubr)
+library(dplyr)
 ```
 
-## Run 54188 data through custom model
+### Prepare data
 
-**Load and clean data**
+Load data for population 54188 and format it with mrmr's clean_data( ) function.
 
 ```{r}
-# set paths for 54188 captures and surveys
+# set local paths for 54188 captures and surveys
 captures <- read.csv("/Users/johnimperato/Desktop/Mossy-Pond/data/54188_capture.csv")  
 surveys <- read.csv("/Users/johnimperato/Desktop/Mossy-Pond/data/54188_survey.csv")   
 
-# run mrmr::clean_data()
+# clean data
 data_54188 <- mrmr::clean_data(captures, surveys)
 ```
 
-**Fit the custom model**
+### Fit the Custom Model
 
 ```{r}
 # Fit the custom model using the modified function
@@ -56,59 +84,109 @@ write.csv(custom_mod_54188_summary, "54188_custom_mod_summary")
 
 **Plot abundance and recruitment**
 
-```{r}
+with mrmr's built-in plotting functionality.
 
+```{r}
 trapdoor_custom_abundance_plot <- mrmr::plot_model(custom_mod_54188, "abundance")
 trapdoor_custom_recruitment_plot <- mrmr::plot_model(custom_mod_54188, "recruitment")
 
-# arrange plots together
+# arrange plots 
 mrmr_custom_plots_54188 <- ggarrange(trapdoor_custom_abundance_plot, trapdoor_custom_recruitment_plot, ncol =1)
 
 # add title
 custom_annotated <- annotate_figure(mrmr_custom_plots_54188, top = text_grob("Time-Varying Detection mrmr", size = 14, face = "bold"))
-
 ```
 
-## Run classic mrmr model on 54188 data
+### Fit the classic model
 
 ```{r}
-
 # Fit the model using mrmr's built in function
-classic_mod_54188 <- mrmr::fit_model(data_54188,
+classic_mod_54188 <- fit_model_classic_loglik(data_54188,
                                 chains = 3, 
                                 iter_sampling = 1000, 
                                 iter_warmup = 400)
 
+# create and view summary
 classic_mod_54188_summary <- classic_mod_54188$m_fit$summary()
 View(classic_mod_54188_summary)
 
+# save summary to .csv file
 write.csv(classic_mod_54188_summary, "54188_classic_mod_summary.csv")
-
-plot_model(classic_mod_54188, "abundance")
-plot_model(classic_mod_54188, "recruitment")
 
 ```
 
 **Plot abundance and recruitment**
 
-```{r}
+with mrmr's built-in plotting functionality.
 
+```{r}
 trapdoor_classic_abundance_plot <- mrmr::plot_model(classic_mod_54188, "abundance")
 trapdoor_classic_recruitment_plot <- mrmr::plot_model(classic_mod_54188, "recruitment")
 
+# arrange plots
 mrmr_classic_plots_54188 <- ggarrange(trapdoor_classic_abundance_plot, trapdoor_classic_recruitment_plot, ncol =1)
 
-# Add title
+# add title
 classic_annotated <- annotate_figure(mrmr_classic_plots_54188, top = text_grob("Classic mrmr", size = 14, face = "bold"))
 
 ```
 
-## Compare Model Output
+## Model Comparison
 
-**Visual Comparison**
+### Generated Quantities
+
+**Create a table comparing the mean generated quantity values for each model**
+
+This table shows **only the mean** estimated value for each generated quantity. It is meant to serve as a quick reference for comparing model output. See the individual model summaries for complete generated quantity summaries.
 
 ```{r}
+# pull quantities from model fit summary
+N_classic <- classic_mod_54188_summary[4216:4220, 1:2]
+N_custom <- custom_mod_54188_summary[4229:4233, 1:2]
+B_classic <- classic_mod_54188_summary[4221:4225, 1:2]
+B_custom <- custom_mod_54188_summary[4234:4238, 1:2]
+Phi_classic <- classic_mod_54188_summary[4240:4243, 1:2]
+Phi_custom <- custom_mod_54188_summary[4253:4256, 1:2]
+p_classic <- classic_mod_54188_summary[4226:4239, 1:2]
+p_custom <- custom_mod_54188_summary[4239:4252, 1:2]
+  
+GenQuant_comparison <- bind_rows(
+  left_join(N_classic, N_custom, by = "variable", suffix = c("_classic", "_custom")) %>% mutate(parameter = "abundance"),
+  left_join(B_classic, B_custom, by = "variable", suffix = c("_classic", "_custom")) %>% mutate(parameter = "recruitment"),
+  left_join(Phi_classic, Phi_custom, by = "variable", suffix = c("_classic", "_custom")) %>% mutate(parameter = "survival"),
+  left_join(p_classic, p_custom, by = "variable", suffix = c("_classic", "_custom")) %>% mutate(parameter = "detection"),
+) %>% 
+  select(variable, parameter, everything())
 
+print(GenQuant_comparison)
+
+```
+
+**Visually compare abundance and recruitment estimates between models**
+
+Axes are not standardized, which limits comparison value.
+
+```{r}
+# visual comparison of abundance and recruitment plots
 abund_recruit_comparison_plot_54188 <- ggarrange(classic_annotated, custom_annotated, ncol=2)
+print(abund_recruit_comparison_plot_54188)
+```
+
+### Quantifed Model Fit
+
+Use leave-one-out (LOO) cross-validation, a standard method to calculate the predictive accuracy of Bayesian models, to compare how well the classic and custom models fit the Trapdoor data. The cmdstanr package has built in LOO capabilities. Briefly,
+
+-   LOO cross-validation uses log likelihood values, which now appear in the model summary as generated quantities, to evaluate how well the model predicts each data point when that point is left out of the fitting process. Likelihood, calculated at the individual level, is the probability of observing the data (in this case, an individual frog's capture history) given the model parameters.
+
+The loo( ) function generates an expected log predictive density (elpd) value for each model. The loo_compare( ) function ranks models based on their elpd values and calculates the difference in those values. A difference of 2-3x the standard error is generally considered significant in a LOO comparison. In this case, the elpd_diff value is 2.95x the standard error, suggesting that the custom mrmr model fits the Trapdoor data significantly better than the classic model.
+
+```{r}
+loo_classic <- classic_mod_54188$m_fit$loo()
+
+loo_custom <- custom_mod_54188$m_fit$loo()
+
+loo_compare <- loo::loo_compare(loo_classic, loo_custom)
+
+print(loo_compare)
 
 ```
