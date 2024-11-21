@@ -14,13 +14,33 @@ vs.
 
 ## Introduction
 
+The R package mrmr serves as an interface to prepare data and run population models. It relies on a site-specific multi-state Bayesian open-population Jolly-Seber CMR model (hereafter referred to as the multi-state model) for the mathematical and computational part of model fitting.The multi-state model is written in the Stan programming language, which is designed for probabilistic modeling and Bayesian inference. The 'changes to mrmr' outlined in this report are primarily changes to the multi-state model, via modifications to the Stan code. The Stan code is not included in this report. Instead, changes are described using the English language. Snippets of essential Stan code are provided, when necessary, in *italics*.
+
+The multi-state model is composed of seven blocks:
+
+1.  Functions - handle repeated calculations. Key functions are forward_prob( ) and partial_sum_lpmf( ).
+
+2.  Data - specifies input data.
+
+3.  Transformed Data
+
+4.  Parameters - declared the parameters the model will estimate.
+
+5.  Transformed parameters
+
+6.  Model - defines the statistical model and specifies the priors.
+
+7.  Generated quantities - calculates quantities after the model is fit, used for interpretation and diagnostics.
+
+Changes made to each block are described below.
+
 ### Generated Quantities Block
 
 Both the classic and custom models include changes to the generated quantities block of mrmr's underlying Stan model. The generated quantities block is composed of post-hoc computations based on the model's parameters after it has finished fitting the data. Changes to this block do not affect how the model runs or the estimated parameter values. The generated quantities blocks of both the custom and classic model are identical. Generated quantities include:
 
-1.  N - total abundance, estimated for each primary period. Included in the standard mrmr model.
+1.  N - total abundance, estimated for each primary period.
 
-2.  B - number of adults recruited into the population, estimated for each primary period. Included in the standard mrmr model.
+2.  B - number of adults recruited into the population, estimated for each primary period.
 
 3.  p - detection probability, estimated for each session (secondary period). In the classic model, p is fixed so the estimate is identical for each session. In the custom model, p is estimated independently for each session (time-varying detection probabilities).
 
@@ -30,11 +50,23 @@ Both the classic and custom models include changes to the generated quantities b
 
 5.  log_lik - log of the likelihood, calculated for each individual, real and pseudo. Likelihood is the probability of observing an individual's capture history given the model parameters. Pseudo-individuals don't actually have a capture histories, so their log_lik values are all identical. See the 'Compare Model Fit' section of this report for more information about this quantity.
 
-### Other Blocks...
+### Parameters Block
 
-The custom mrmr model calls upon a Stan file that is modified from the classic mrmr Stan file. Compared to the classic, the modified Stan file...
+The changes made to this block are essential to achieving independent, time-varying estimates of detection probability.
 
-1.  allows for independent, session-varying estimates of frog detection probabilities
+**beta_detect** a vector of parameters that represent the logit-scale detection probability for survey sessions. The classic mrmr model defines beta_detect as a vector of size m_detect. m_detect refers to the number of detection covariates. The custom model defines beta_detect as a vector of size Jtot. Jtot refers to the total number of survey sessions.
+
+Simply, the original line *vector[m_detect] beta_detect*; is changed to *vector[Jtot] beta_detect;* where each entry corresponds to a specific survey session.
+
+Meaning is assigned to beta_detect in the functions block via transformed parameter logit_detect, within the forward_prob( ) function. No changes were made to this function.
+
+### Transformed Parameters Block
+
+*logit_detect = X_detect \* beta_detect;* —\> *logit_detect = beta_detect;*
+
+In the classic model, logit_detect is derived from beta_detect using the design matrix x_detect. This ties detection probabilities to shared covariates. In the custom model, logit_detect is assigned directly to beta_detect, making each session's detection probability independent. \*
+
+-   When I want to introduce covariates into my analysis, I will need to revisit this section.
 
 ### The data
 
@@ -178,7 +210,7 @@ Use leave-one-out (LOO) cross-validation, a standard method to calculate the pre
 
 -   LOO cross-validation uses log likelihood values, which now appear in the model summary as generated quantities, to evaluate how well the model predicts each data point when that point is left out of the fitting process. Likelihood, calculated at the individual level, is the probability of observing the data (in this case, an individual frog's capture history) given the model parameters.
 
-The loo( ) function generates an expected log predictive density (elpd) value for each model. The loo_compare( ) function ranks models based on their elpd values, with the best fit listed first, and calculates the difference in those values. A difference of 2-3x the standard error is generally considered significant in a LOO comparison.
+The loo( ) function generates an expected log predictive density (elpd) value for each model. The loo_compare( ) function ranks models based on their elpd values, with the best fit listed first, and calculates the difference in those values. A difference of more than 2x the standard error is generally considered significant in a LOO comparison.
 
 ```{r}
 loo_classic <- classic_mod_54188$m_fit$loo()
