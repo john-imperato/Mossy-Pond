@@ -9,7 +9,7 @@ author: "Your Name"
 library(dplyr)
 library(readr)
 library(tibble)
-library(rstan)
+library(cmdstanr)
 library(mrmr)
 library(ggpubr)
 ```
@@ -42,10 +42,14 @@ write.csv(classic_mod_mp_summary, "/Users/johnimperato/Desktop/Mossy-Pond_compan
 
 ```{r}
 
-abundance_MP_classic <- plot_model(mrmr_mossy_mod1, "abundance")
-recruitment_MP_classic <- plot_model(mrmr_mossy_mod1, "recruitment")
+abundance_MP_classic <- plot_model(classic_mod_mp, "abundance")
+recruitment_MP_classic <- plot_model(classic_mod_mp, "recruitment")
 
-MP_classic_plots <- ggarrange(abundance_MP_classic, recruitment_MP_classic, ncol=1)
-MP_classic_plots
+mp_classic_plots <- ggarrange(abundance_MP_classic, recruitment_MP_classic, ncol=1)
+
+# add title
+mp_classic_plots_annotated <- annotate_figure(mp_classic_plots, top = text_grob("Classic mrmr", size = 14, face = "bold"))
+
+mp_classic_plots_annotated
 
 ```
