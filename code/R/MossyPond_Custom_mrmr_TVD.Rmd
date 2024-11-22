@@ -13,6 +13,8 @@ library(tibble)
 library(cmdstanr)
 library(mrmr)
 library(ggpubr)
+library(gridExtra)
+library(grid)
 ```
 
 **Load and format data**
@@ -67,14 +69,14 @@ mp_custom_plots_annotated
 
 ```{r}
 # pull generated quantities from model fit summary
-N_classic <- classic_mod_54188_summary[, c(1,2,4)]
-N_custom <- custom_mod_54188_summary[33659:33674, c(1,2,4)]
-B_classic <- classic_mod_54188_summary[4221:4225, c(1,2,4)]
-B_custom <- custom_mod_54188_summary[33676:33691, c(1,2,4)]
-Phi_classic <- classic_mod_54188_summary[4240:4243, c(1,2,4)]
-Phi_custom <- custom_mod_54188_summary[33739:33753, c(1,2,4)]
-p_classic <- classic_mod_54188_summary[4226:4239, c(1,2,4)]
-p_custom <- custom_mod_54188_summary[33692:33738, c(1,2,4)]
+N_classic <- classic_mod_mp_summary[33613:33628, c(1,2,4)]
+N_custom <- custom_mod_mp_summary[33658:33674, c(1,2,4)]
+B_classic <- classic_mod_mp_summary[33629:33644, c(1,2,4)]
+B_custom <- custom_mod_mp_summary[33675:33690, c(1,2,4)]
+Phi_classic <- classic_mod_mp_summary[33692:33706, c(1,2,4)]
+Phi_custom <- custom_mod_mp_summary[33738:33752, c(1,2,4)]
+p_classic <- classic_mod_mp_summary[33645:33691, c(1,2,4)]
+p_custom <- custom_mod_mp_summary[33691:33737, c(1,2,4)]
   
 GenQuant_comparison_mp <- bind_rows(
   left_join(N_classic, N_custom, by = "variable", suffix = c("_classic", "_custom")) %>% mutate(parameter = "abundance"),
@@ -84,13 +86,15 @@ GenQuant_comparison_mp <- bind_rows(
 ) %>% 
   select(variable, parameter, everything())
 
-print(GenQuant_comparison_mp)
+View(GenQuant_comparison_mp)
 
 # Convert table to grob (graphical object)
 table_grob <- tableGrob(GenQuant_comparison_mp)
 
 # Save as an image
 ggsave("/Users/johnimperato/Desktop/Mossy-Pond/out/MP_comparison_table.png", plot = table_grob, width = 8, height = 10)
+
+  View(custom_mod_mp_summary)
 
 ```
 
