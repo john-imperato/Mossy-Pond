@@ -73,6 +73,9 @@ library(cmdstanr)
 library(mrmr)
 library(ggpubr)
 library(dplyr)
+library(gridExtra)
+library(grid)
+library(ggplot2)
 ```
 
 ### Prepare data
@@ -168,20 +171,20 @@ classic_annotated <- annotate_figure(mrmr_classic_plots_54188, top = text_grob("
 
 #### Generated Quantities
 
-**Create a table comparing the mean generated quantity values for each model**
+**Create a table comparing the mean and sd generated quantity values for each model**
 
-This table shows **only the mean** estimated value for each generated quantity. It is meant to serve as a quick reference for comparing model output. See the individual model summaries for complete generated quantity summaries.
+This table shows **only the mean and sd** estimated value for each generated quantity. It is meant to serve as a quick reference for comparing model output. See the individual model summaries for complete generated quantity summaries.
 
 ```{r}
 # pull quantities from model fit summary
-N_classic <- classic_mod_54188_summary[4216:4220, 1:2]
-N_custom <- custom_mod_54188_summary[4229:4233, 1:2]
-B_classic <- classic_mod_54188_summary[4221:4225, 1:2]
-B_custom <- custom_mod_54188_summary[4234:4238, 1:2]
-Phi_classic <- classic_mod_54188_summary[4240:4243, 1:2]
-Phi_custom <- custom_mod_54188_summary[4253:4256, 1:2]
-p_classic <- classic_mod_54188_summary[4226:4239, 1:2]
-p_custom <- custom_mod_54188_summary[4239:4252, 1:2]
+N_classic <- classic_mod_54188_summary[4216:4220, c(1,2,4)]
+N_custom <- custom_mod_54188_summary[4229:4233, c(1,2,4)]
+B_classic <- classic_mod_54188_summary[4221:4225, c(1,2,4)]
+B_custom <- custom_mod_54188_summary[4234:4238, c(1,2,4)]
+Phi_classic <- classic_mod_54188_summary[4240:4243, c(1,2,4)]
+Phi_custom <- custom_mod_54188_summary[4253:4256, c(1,2,4)]
+p_classic <- classic_mod_54188_summary[4226:4239, c(1,2,4)]
+p_custom <- custom_mod_54188_summary[4239:4252, c(1,2,4)]
   
 GenQuant_comparison <- bind_rows(
   left_join(N_classic, N_custom, by = "variable", suffix = c("_classic", "_custom")) %>% mutate(parameter = "abundance"),
@@ -193,6 +196,12 @@ GenQuant_comparison <- bind_rows(
 
 print(GenQuant_comparison)
 
+# Convert table to grob (graphical object)
+table_grob <- tableGrob(GenQuant_comparison)
+
+# Save as an image
+ggsave("/Users/johnimperato/Desktop/Mossy-Pond/out/54188_comparison_table.png", plot = table_grob, width = 8, height = 8)
+
 ```
 
 **Visually compare abundance and recruitment estimates between models**
@@ -203,13 +212,14 @@ Note that axes are not standardized.
 # visual comparison of abundance and recruitment plots
 abund_recruit_comparison_plot_54188 <- ggarrange(classic_annotated, custom_annotated, ncol=2)
 print(abund_recruit_comparison_plot_54188)
+
 ```
 
 #### Model Fit
 
 Use leave-one-out (LOO) cross-validation, a standard method to calculate the predictive accuracy of Bayesian models, to compare how well the classic and custom models fit the Trapdoor data. The cmdstanr package has built in LOO capabilities. Briefly,
 
--   LOO cross-validation uses log likelihood values, which now appear in the model summary as generated quantities, to evaluate how well the model predicts each data point when that point is left out of the fitting process. Likelihood, calculated at the individual level, is the probability of observing the data (in this case, an individual frog's capture history) given the model parameters.
+-   LOO cross-validation uses log likelihood values, which now appear in the model summary as generated quantities, to evaluate how well the model predicts each data point when that point is left out of the fitting process. Likelihood, calculated at the individual level, is the probability of observing the data (in this case, an individual frog's capture history) given the model parameters. Log likelihood calculated at the individual level in the generated quantities block is different than the total log likelihood, summed across all individuals and sessions, calculated during model fitting in the model block.
 
 The loo( ) function generates an expected log predictive density (elpd) value for each model. The loo_compare( ) function ranks models based on their elpd values, with the best fit listed first, and calculates the difference in those values. A difference of more than 2x the standard error is generally considered significant in a LOO comparison.
 
@@ -227,14 +237,14 @@ elpd_diff_model1 <- loo_compare["model1", "elpd_diff"]
 se_diff_model1 <- loo_compare["model1", "se_diff"]
 
 # calculate significance ratio
-result <- elpd_diff_model1 / se_diff_model1
+result <- abs(elpd_diff_model1 / se_diff_model1)
 
 # interpret
 if (abs(result) > 2) {
-  cat("Result of elpd_diff / se_diff for model1:", result, "\n")
+  cat("The absolute value of elpd_diff / se_diff for model1:", result, "\n")
   cat("The custom model fits the data significantly better than the classic model.\n")
 } else {
-  cat("Result of elpd_diff / se_diff for model1:", result, "\n")
+  cat("The absolute value of elpd_diff / se_diff for model1:", result, "\n")
   cat("The custom model does not fit the data significantly better than the classic model.\n")
 }
 
