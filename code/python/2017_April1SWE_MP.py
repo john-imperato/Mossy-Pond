@@ -1,5 +1,6 @@
 import os
 import pandas as pd
+import arcpy
 
 def process_station_data(station_file, station_name, apr1_avg, lat, lon, date_col='DATE TIME', value_col='VALUE'):
     """
@@ -17,39 +18,39 @@ def process_station_data(station_file, station_name, apr1_avg, lat, lon, date_co
     Returns:
         pd.DataFrame: Processed DataFrame with added columns for April 1st average, pctAvg, and location.
     """
-    # Define the base directory where your data is stored
+    # Define base directory 
     base_directory = r"C:\Modeling Geographical Objects\MossyPond\Data\SWE"
     
-    # Join the base directory with the station file name to create the full file path
+    # join base directory station file name to create full file path
     file_path = os.path.join(base_directory, station_file)
     
-    # Load the data and keep necessary columns
+    # load data 
     data = pd.read_csv(file_path)
     
-    # Filter only the relevant columns
+    # filter columns
     data = data[[date_col, value_col]]
     
-    # Convert the date column to a datetime object
+    # convert date column to a datetime object
     data[date_col] = pd.to_datetime(data[date_col])
     
-    # Define April 1st dates for filtering
+    # define April 1st dates for filtering
     april1_dates = pd.to_datetime(["2012-04-01", "2013-04-01", "2014-04-01", "2015-04-01",
                                    "2016-04-01", "2017-04-01", "2018-04-01"])
     
-    # Filter for April 1st observations
+    # filter for April 1st observations
     data_filtered = data.loc[data[date_col].isin(april1_dates)].copy()
     
-    # Add April 1st average column
+    # add April 1st average column
     data_filtered.loc[:, 'Apr1Avg'] = apr1_avg
     
-    # Calculate pctAvg (percentage of the April 1st average) and round to 2 decimals
+    # Calculate pctAvg
     data_filtered.loc[:, 'pctAvg'] = round((data_filtered[value_col] / apr1_avg) * 100, 2)
     
-    # Add location information
+    # add location information
     data_filtered.loc[:, 'LAT'] = lat
     data_filtered.loc[:, 'LON'] = lon
     
-    # Add station name column
+    # add station name column
     data_filtered.loc[:, 'Station'] = station_name
     
     return data_filtered
@@ -84,7 +85,7 @@ fnp_data = process_station_data("FNP.csv", "FNP", 29.8, 39.47, -120.572)
 # WBB: Webber Lake
 wbb_data = process_station_data("WBB.csv", "WBB", 32.0, 39.485, -120.425)
 
-# Combine data frames
+# combine data frames
 data_frames = [rdm_data, dns_data, fod_data, csl_data, mwl_data, enm_data, onn_data, bom_data, fnp_data, wbb_data]
 SWE_all = pd.concat(data_frames, ignore_index=True)
 
