@@ -1,4 +1,4 @@
-fit_model_classic_loglik <- function(
+fit_model_classic <- function(
     data,
     seed = NULL,
     refresh = NULL,
@@ -32,7 +32,7 @@ fit_model_classic_loglik <- function(
     ...
 ) {
   # updated to use my custom stan model
-  stan_file <- "/Users/johnimperato/Desktop/Mossy-Pond/code/stan/twostate_loglik_modified.stan" # specify local path
+  stan_file <- "/Users/johnimperato/Desktop/Mossy-Pond/code/stan/JI_classic_twostate.stan" # specify local path
   
   model <- cmdstan_model(stan_file, ...)
   
