@@ -7,7 +7,12 @@ date: "2024-11-13"
 # custom TVD mrmr model with MP data
 
 ```{r}
+library(dplyr)
+library(readr)
+library(tibble)
+library(cmdstanr)
 library(mrmr)
+library(ggpubr)
 ```
 
 **Load and format data**
@@ -34,15 +39,23 @@ custom_mod_MP <- fit_model_custom(mp_custom_data,
 custom_mod_mp_summary <- custom_mod_MP$m_fit$summary()
 View(custom_mod_mp_summary)
 
-write.csv(custom_mod_mp_summary, "/Users/johnimperato/Desktop/Mossy-Pond_companion/mp_custom_mod_sumary.csv")
-
+write.csv(custom_mod_mp_summary, "/Users/johnimperato/Desktop/Mossy-Pond_companion/mp_custom_mod_summary.csv")
 
 ```
+
+**Plot abundance and recruitment**
 
 ```{r}
 
 abundance_MP_custom <- mrmr::plot_model(custom_mod_MP, "abundance")
 recruitment_MP_custom <- mrmr::plot_model(custom_mod_MP, "recruitment")
+
+mp_custom_plots <- ggarrange(abundance_MP_custom, recruitment_MP_custom, ncol=1)
+
+# add title
+mp_custom_plots_annotated <- annotate_figure(mp_custom_plots, top = text_grob("Custom mrmr", size = 14, face = "bold"))
+
+mp_custom_plots_annotated
 
 ```
 
@@ -50,22 +63,20 @@ recruitment_MP_custom <- mrmr::plot_model(custom_mod_MP, "recruitment")
 
 #### Generated Quantities
 
-**Create a table comparing the mean and sd generated quantity values for each model**
-
-This table shows **only the mean and sd** estimated value for each generated quantity. It is meant to serve as a quick reference for comparing model output. See the individual model summaries for complete generated quantity summaries.
+*Parameter comparison table*
 
 ```{r}
-# pull quantities from model fit summary
+# pull generated quantities from model fit summary
 N_classic <- classic_mod_54188_summary[, c(1,2,4)]
 N_custom <- custom_mod_54188_summary[33659:33674, c(1,2,4)]
 B_classic <- classic_mod_54188_summary[4221:4225, c(1,2,4)]
-B_custom <- custom_mod_54188_summary[4234:4238, c(1,2,4)]
+B_custom <- custom_mod_54188_summary[33676:33691, c(1,2,4)]
 Phi_classic <- classic_mod_54188_summary[4240:4243, c(1,2,4)]
-Phi_custom <- custom_mod_54188_summary[4253:4256, c(1,2,4)]
+Phi_custom <- custom_mod_54188_summary[33739:33753, c(1,2,4)]
 p_classic <- classic_mod_54188_summary[4226:4239, c(1,2,4)]
-p_custom <- custom_mod_54188_summary[4239:4252, c(1,2,4)]
+p_custom <- custom_mod_54188_summary[33692:33738, c(1,2,4)]
   
-GenQuant_comparison <- bind_rows(
+GenQuant_comparison_mp <- bind_rows(
   left_join(N_classic, N_custom, by = "variable", suffix = c("_classic", "_custom")) %>% mutate(parameter = "abundance"),
   left_join(B_classic, B_custom, by = "variable", suffix = c("_classic", "_custom")) %>% mutate(parameter = "recruitment"),
   left_join(Phi_classic, Phi_custom, by = "variable", suffix = c("_classic", "_custom")) %>% mutate(parameter = "survival"),
@@ -73,34 +84,29 @@ GenQuant_comparison <- bind_rows(
 ) %>% 
   select(variable, parameter, everything())
 
-print(GenQuant_comparison)
+print(GenQuant_comparison_mp)
 
 # Convert table to grob (graphical object)
-table_grob <- tableGrob(GenQuant_comparison)
+table_grob <- tableGrob(GenQuant_comparison_mp)
 
 # Save as an image
-ggsave("/Users/johnimperato/Desktop/Mossy-Pond/out/54188_comparison_table.png", plot = table_grob, width = 8, height = 8)
+ggsave("/Users/johnimperato/Desktop/Mossy-Pond/out/MP_comparison_table.png", plot = table_grob, width = 8, height = 10)
 
 ```
 
-**Visually compare abundance and recruitment estimates between models**
-
+**Abundance/Recruitment comparison plot**
 Note that axes are not standardized.
 
 ```{r}
 # visual comparison of abundance and recruitment plots
-abund_recruit_comparison_plot_54188 <- ggarrange(classic_annotated, custom_annotated, ncol=2)
-print(abund_recruit_comparison_plot_54188)
+abund_recruit_comparison_plot_mp <- ggarrange(mp_classic_plots_annotated, mp_custom_plots_annotated, ncol=2)
+print(abund_recruit_comparison_plot_mp)
 
 ```
 
 #### Model Fit
 
-Use leave-one-out (LOO) cross-validation, a standard method to calculate the predictive accuracy of Bayesian models, to compare how well the classic and custom models fit the Trapdoor data. The cmdstanr package has built in LOO capabilities. Briefly,
-
--   LOO cross-validation uses log likelihood values, which now appear in the model summary as generated quantities, to evaluate how well the model predicts each data point when that point is left out of the fitting process. Likelihood, calculated at the individual level, is the probability of observing the data (in this case, an individual frog's capture history) given the model parameters. Log likelihood calculated at the individual level in the generated quantities block is different than the total log likelihood, summed across all individuals and sessions, calculated during model fitting in the model block.
-
-The loo( ) function generates an expected log predictive density (elpd) value for each model. The loo_compare( ) function ranks models based on their elpd values, with the best fit listed first, and calculates the difference in those values. A difference of more than 2x the standard error is generally considered significant in a LOO comparison.
+**LOO comparison**
 
 ```{r}
 loo_classic <- classic_mod_54188$m_fit$loo()
