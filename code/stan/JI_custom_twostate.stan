@@ -188,7 +188,7 @@ parameters {
   real<lower=0> sigma_phi;
   vector<multiplier=sigma_phi>[T] eps_phi;
   
-  // detection params
+  // detection 
   vector[Jtot] beta_detect;  // IMPERATO_2024NOV11: change from m_detect to Jtot
                             // Allows for indpendent estimates of beta_detect (detection probability) for each session
 }
