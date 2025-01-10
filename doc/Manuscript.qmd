@@ -14,46 +14,6 @@ John Imperato^1^
 
 ### Introduction
 
--   Setup: which scale?
-
-    -   Broadest: global biodiversity loss (as in Knapp et al. 2024)
-
-    -   Middle: global amphibian declines (as in Keung et al. 2019)
-
-    -   Narrowest: SNYLF are an endangered species... (as in Pope and Matthews 2004)
-
--   Contextualize:
-
-    -   reintroduction as a conservation method (as in Keung et al. 2019)
-
-    -   Reintroductions of Bd resistant Rana sierrae have proved to be a successful method for recovery in the Yosemite National park (Knapp et al. 2024).
-
--   Bridge:
-
-    -   Reintroductions rely on donations from naturally persistent populations with evolved resistance to Bd
-
-    -   It is vital to understand what drives the population dynamics of these persistent donor populations to inform conservation efforts
-
-    -   Large, persistent populations in the northern part of the species' range are relatively rare compared to the central and southern parts of he range.
-
-        -   especially populations occupying atypical habitat (streams, ephemeral ponds, shallow lake)
-
-    -   Mossy Pond is one such population
-
-        -   In the TNF, managed largely by CDFW (?)
-
-        -   other relevant descriptions
-
-    -   Mossy Pond population is a candidate donor population for areas identified as Native Species Reserves for SNYLF
-
--   Study Overview
-
-    -   in 2014, CDFW began a 5-year CMR study to gain insight into this population because of its conservation significance
-
-        -   get some of the "original directive" from Sara M & Isaac
-
-    -   This paper describes analysis of the resulting data and establishes a relationship between (local climate variables and SNYLF population viability).
-
 ### Methods
 
 ### Results
