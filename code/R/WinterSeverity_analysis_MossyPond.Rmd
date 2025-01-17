@@ -8,26 +8,53 @@ date: "2024-12-04"
 
 **Winter severity measure**: percent of historical average 1 April SWE in the Mossy Pond study area.
 
--   snow data taken from 10 observation stations between 5.1 and 19.5 km from the MPSA
+-   1 April SWE data interpolated from 10 observation stations between 5.1 and 19.5 km from the MPSA
+-   Data downloaded from: <https://cdec.water.ca.gov/dynamicapp/wsSensorData>
 
 ## Yearly % of historical average 1 April SWE in the Mossy Pond study area
 
 ```{r}
 library(ggplot2)
+library(tidyverse)
+library(ggpubr)
 ```
 
 ```{r}
 
 # create winter severity data frame
-avg_swe <- read.csv('/Users/johnimperato/Desktop/Mossy-Pond/data/Yearly_WinterSeverity_MPSA.csv')
+avg_swe <- read.csv('/Users/johnimperato/Desktop/Mossy-Pond/data/Yearly_Winter_Severity_2011_2018_MPSA.csv')
 
 avg_swe <- avg_swe %>%
   rename(Winter_Severity = Average.Pixel.Value) %>%
-  mutate(Winter = c("2011-2012", "2012-2013", "2013-2014", "2014-2015", "2015-2016", "2016-2017", "2017-2018"))
+  mutate(Winter = c("2010-2011", "2011-2012", "2012-2013", "2013-2014", "2014-2015", "2015-2016", "2016-2017", "2017-2018"))
 
 # create data frame for winter severity one year prior
 avg_swe_year_prior <- avg_swe %>%
                         mutate(Year = Year + 1)
+
+# create data frame for winter severity two years prior
+avg_swe_2year_prior <- avg_swe %>%
+                        mutate(Year = Year + 2)
+
+# three-year rolling average 
+avg_swe_3yrAvg <- avg_swe %>% 
+  mutate(
+    swe_3yrAvg = (
+      Winter_Severity + 
+      lag(Winter_Severity, 1) +
+      lag(Winter_Severity, 2)
+      ) / 3
+  )
+
+# three-year rolling average with one-year lag
+avg_swe_3yrAvg_1yrLag <- avg_swe %>% 
+  mutate(
+    swe_3yrAvg_1yrLag = (
+      lag(Winter_Severity, 1) +
+      lag(Winter_Severity, 2) +
+      lag(Winter_Severity, 3)
+      ) / 3
+  )
 
 ```
 
@@ -54,6 +81,20 @@ N_yearly_avg <- N %>%
   mutate(Year = c(2014:2018)) %>%
   # Rename 'mean' to 'Abundance' and reorder columns
   rename(Mean_Abundance = mean) %>%
+  select(Year, Mean_Abundance)  
+
+# calculate yearly median N
+N_yearly_median <- N %>%
+  # Group rows and calculate the mean of numeric columns
+  mutate(group = c(rep(1:4, each = 3), rep(5, 4))) %>%
+  group_by(group) %>%
+  summarise(across(where(is.numeric), mean, na.rm = TRUE)) %>%
+  ungroup() %>%
+  select(-group) %>%
+  # Add a new Year column
+  mutate(Year = c(2014:2018)) %>%
+  # Rename 'mean' to 'Abundance' and reorder columns
+  rename(Mean_Abundance = median) %>%
   select(Year, Mean_Abundance)  
 
 # extract B values from model summary
@@ -85,29 +126,77 @@ phi_overwinter <- phi %>%
   rename(Overwinter_Survival_Probability = mean) %>%
   select(Winter, Overwinter_Survival_Probability)  
 
-```
+print(N)
+print(B)
 
-**Growth rate**
-
-```{r}
-
-
-
+print(B_yearly_avg)
+print(N_yearly_avg)
+print(phi_overwinter)
 
 ```
 
 ## Abundance-Winter severity Comaprison
 
-### Winter 1 year ago 
+### Same Year
 
 ```{r}
 
 # combine data fames
-comparison_df_1 <- N_yearly_avg %>%
-  left_join(avg_swe_year_prior, by = "Year")
+comparison_df_N0 <- N_yearly_avg %>%
+  left_join(avg_swe, by = "Year")
 
 # plot
-abundance_WinterSeverity_1yr <- ggplot(comparison_df_1, aes(x = Year)) +
+WinterSeverity_N0 <- ggplot(comparison_df_N0, aes(x = Year)) +
+  # frog abundance line
+  geom_line(aes(y = Mean_Abundance, color = "Frog Abundance"), size = 1) +
+  geom_point(aes(y = Mean_Abundance, color = "Frog Abundance"), size = 2) +
+  # winter severity line
+  geom_line(aes(y = Winter_Severity, color = "Winter Severity Same Year\n(% of historical avg 1 April SWE)"), linetype = "dashed", size = 1) +
+  geom_point(aes(y = Winter_Severity, color = "Winter Severity Same Year\n(% of historical avg 1 April SWE)"), size = 2) +
+  # Labels and theme
+  scale_color_manual(
+    name = "Legend",
+    values = c("Frog Abundance" = "blue", "Winter Severity Same Year\n(% of historical avg 1 April SWE)" = "red")
+  ) +
+  theme_minimal() +
+  labs(
+    title = "Frog Abundance and Winter Severity Same Year",
+    x = "Year",
+    y = "Value"
+  )
+
+# correlation
+correlation_N0 <- cor(comparison_df_N0$Mean_Abundance, comparison_df_N0$Winter_Severity)
+cor_test_N0 <- cor.test(comparison_df_N0$Mean_Abundance, comparison_df_N0$Winter_Severity)
+
+correlation_plot_N0 <- ggplot(data = comparison_df_S_N, aes(x = Winter_Severity, y = Mean_Abundance)) +
+  geom_point() +
+  geom_smooth(method = "lm" ,se = FALSE) +
+  annotate("text", x = 75, y = 185, label = paste0("Correlation: ", round(correlation_N0, 2)), size = 5, color = "red") +
+  labs(
+    title = "Correlation between Same-Year Winter Severity and Abundance",
+    x = "Winter Severity (% of Historical Average 1 April SWE)",
+    y = "Yearly Mean Abundance"
+  ) +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5))
+
+######################## Print
+print(WinterSeverity_N0)
+print(correlation_plot_N0)
+
+```
+
+### One year ago
+
+```{r}
+
+# combine data fames
+comparison_df_N1 <- N_yearly_avg %>%
+  left_join(avg_swe_year_prior, by = "Year")
+
+###################### plot
+WinterSeverity_N1 <- ggplot(comparison_df_N1, aes(x = Year)) +
   # frog abundance line
   geom_line(aes(y = Mean_Abundance, color = "Frog Abundance"), size = 1) +
   geom_point(aes(y = Mean_Abundance, color = "Frog Abundance"), size = 2) +
@@ -124,18 +213,18 @@ abundance_WinterSeverity_1yr <- ggplot(comparison_df_1, aes(x = Year)) +
     title = "Frog Abundance and Winter Severity One Year Prior",
     x = "Year",
     y = "Value"
-  )
+  ) +
+  theme(legend.position = c(0.8, 0.2))
 
 
+###################### correlation
+correlation_N1 <- cor(comparison_df_N1$Mean_Abundance, comparison_df_N1$Winter_Severity)
+cor_test_1_N <- cor.test(comparison_df_N1$Mean_Abundance, comparison_df_N1$Winter_Severity)
 
-# correlation
-correlation1 <- cor(comparison_df_1$Mean_Abundance, comparison_df_1$Winter_Severity)
-cor_test1 <- cor.test(comparison_df_1$Mean_Abundance, comparison_df_1$Winter_Severity)
-
-correlation_plot1 <- ggplot(data = comparison_df_1, aes(x = Winter_Severity, y = Mean_Abundance)) +
+correlation_plot_N1 <- ggplot(data = comparison_df_N1, aes(x = Winter_Severity, y = Mean_Abundance)) +
   geom_point() +
   geom_smooth(method = "lm" ,se = FALSE) +
-  annotate("text", x = 75, y = 185, label = paste0("Correlation: ", round(correlation1, 2)), size = 5, color = "red") +
+  annotate("text", x = 75, y = 185, label = paste0("Correlation: ", round(correlation_N1, 2)), size = 5, color = "red") +
   labs(
     title = "Correlation between Winter Severity and Abundance",
     x = "Winter Severity (% of Historical Average 1 April SWE)",
@@ -144,20 +233,225 @@ correlation_plot1 <- ggplot(data = comparison_df_1, aes(x = Winter_Severity, y =
   theme_minimal() +
   theme(plot.title = element_text(hjust = 0.5))
 
+
+###################### print
+print(WinterSeverity_N1)
+print(correlation_plot_N1)
+
+ggsave("WinterSeverityN1.png", plot = WinterSeverity_N1, width = 7, height = 4, bg = "white")
+ggsave("CorrelationN1.png", plot = correlation_plot_N1, width = 7, height = 4, bg = "white")
+
+N1_arrange <- ggarrange(WinterSeverity_N1, correlation_plot_N1)
+ggsave("test12345.png", plot = N1_arrange, width = 10, bg = "white")
+
 ```
 
-## Recruitment - Winter Severity Comparison
-
-### Winter 1 year ago 
+### Two Years Ago
 
 ```{r}
 
 # combine data fames
-comparison_df_2 <- B_yearly_avg %>%
+comparison_df_2_N <- N_yearly_avg %>%
+  left_join(avg_swe_2year_prior, by = "Year")
+
+# plot
+abundance_WinterSeverity_2yr <- ggplot(comparison_df_2_N, aes(x = Year)) +
+  # frog abundance line
+  geom_line(aes(y = Mean_Abundance, color = "Frog Abundance"), size = 1) +
+  geom_point(aes(y = Mean_Abundance, color = "Frog Abundance"), size = 2) +
+  # winter severity line
+  geom_line(aes(y = Winter_Severity, color = "Winter Severity Two Years Prior\n(% of historical avg 1 April SWE)"), linetype = "dashed", size = 1) +
+  geom_point(aes(y = Winter_Severity, color = "Winter Severity Two Years Prior\n(% of historical avg 1 April SWE)"), size = 2) +
+  # Labels and theme
+  scale_color_manual(
+    name = "Legend",
+    values = c("Frog Abundance" = "blue", "Winter Severity Two Years Prior\n(% of historical avg 1 April SWE)" = "red")
+  ) +
+  theme_minimal() +
+  labs(
+    title = "Frog Abundance and Winter Severity Two Years Prior",
+    x = "Year",
+    y = "Value"
+  )
+
+# correlation
+correlation_2_N <- cor(comparison_df_2_N$Mean_Abundance, comparison_df_2_N$Winter_Severity)
+cor_test_2_N <- cor.test(comparison_df_2_N$Mean_Abundance, comparison_df_2_N$Winter_Severity)
+
+correlation_plot_2_N <- ggplot(data = comparison_df_2_N, aes(x = Winter_Severity, y = Mean_Abundance)) +
+  geom_point() +
+  geom_smooth(method = "lm" ,se = FALSE) +
+  annotate("text", x = 50, y = 185, label = paste0("Correlation: ", round(correlation_2_N, 2)), size = 5, color = "red") +
+  labs(
+    title = "Correlation between Winter Severity Two Years Prior and Abundance",
+    x = "Winter Severity (% of Historical Average 1 April SWE)",
+    y = "Yearly Mean Abundance"
+  ) +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5))
+
+```
+
+### Three-year rolling average
+
+```{r}
+
+# combine data fames
+comparison_df_N3 <- N_yearly_avg %>%
+  left_join(avg_swe_3yrAvg, by = "Year")
+
+# plot
+WinterSeverity_N3 <- ggplot(comparison_df_N3, aes(x = Year)) +
+  # frog abundance line
+  geom_line(aes(y = Mean_Abundance, color = "Frog Abundance"), size = 1) +
+  geom_point(aes(y = Mean_Abundance, color = "Frog Abundance"), size = 2) +
+  # winter severity line
+  geom_line(aes(y = swe_3yrAvg, color = "Winter Severity 3 yr avg\n(% of historical avg 1 April SWE)"), linetype = "dashed", size = 1) +
+  geom_point(aes(y = swe_3yrAvg, color = "Winter Severity 3 yr avg\n(% of historical avg 1 April SWE)"), size = 2) +
+  # Labels and theme
+  scale_color_manual(
+    name = "Legend",
+    values = c("Frog Abundance" = "blue", "Winter Severity 3 yr avg\n(% of historical avg 1 April SWE)" = "red")
+  ) +
+  theme_minimal() +
+  labs(
+    title = "Frog Abundance and Winter Severity Same Year",
+    x = "Year",
+    y = "Value"
+  )
+
+# correlation
+correlation_N3 <- cor(comparison_df_N3$Mean_Abundance, comparison_df_N3$swe_3yrAvg)
+cor_test_N3 <- cor.test(comparison_df_N0$Mean_Abundance, comparison_df_N3$swe_3yrAvg)
+
+correlation_plot_N3 <- ggplot(data = comparison_df_N3, aes(x = swe_3yrAvg, y = Mean_Abundance)) +
+  geom_point() +
+  geom_smooth(method = "lm" ,se = FALSE) +
+  annotate("text", x = 75, y = 185, label = paste0("Correlation: ", round(correlation_N3, 2)), size = 5, color = "red") +
+  labs(
+    title = "Correlation between 3-yr avg Winter Severity and Abundance",
+    x = "Winter Severity (% of Historical Average 1 April SWE)",
+    y = "Yearly Mean Abundance"
+  ) +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5))
+
+######################## Print
+print(WinterSeverity_N3)
+print(correlation_plot_N3)
+
+```
+### Three-year rolling average w/ 1-yr lag
+
+```{r}
+
+# combine data fames
+comparison_df_N3.1 <- N_yearly_avg %>%
+  left_join(avg_swe_3yrAvg_1yrLag, by = "Year")
+
+# plot
+WinterSeverity_N3.1 <- ggplot(comparison_df_N3.1, aes(x = Year)) +
+  # frog abundance line
+  geom_line(aes(y = Mean_Abundance, color = "Frog Abundance"), size = 1) +
+  geom_point(aes(y = Mean_Abundance, color = "Frog Abundance"), size = 2) +
+  # winter severity line
+  geom_line(aes(y = swe_3yrAvg_1yrLag, color = "Winter Severity 3 yr avg 1 yr lag\n(% of historical avg 1 April SWE)"), linetype = "dashed", size = 1) +
+  geom_point(aes(y = swe_3yrAvg_1yrLag, color = "Winter Severity 3 yr avg 1 yr lag\n(% of historical avg 1 April SWE)"), size = 2) +
+  # Labels and theme
+  scale_color_manual(
+    name = "Legend",
+    values = c("Frog Abundance" = "blue", "Winter Severity 3 yr avg 1 yr lag\n(% of historical avg 1 April SWE)" = "red")
+  ) +
+  theme_minimal() +
+  labs(
+    title = "Frog Abundance and Winter Severity Same Year",
+    x = "Year",
+    y = "Value"
+  )
+
+# correlation
+correlation_N3.1 <- cor(comparison_df_N3.1$Mean_Abundance, comparison_df_N3.1$swe_3yrAvg_1yrLag)
+cor_test_N3.1 <- cor.test(comparison_df_N0$Mean_Abundance, comparison_df_N3.1$swe_3yrAvg_1yrLag)
+
+correlation_plot_N3.1 <- ggplot(data = comparison_df_N3.1, aes(x = swe_3yrAvg_1yrLag, y = Mean_Abundance)) +
+  geom_point() +
+  geom_smooth(method = "lm" ,se = FALSE) +
+  annotate("text", x = 75, y = 185, label = paste0("Correlation: ", round(correlation_N3.1, 2)), size = 5, color = "red") +
+  labs(
+    title = "Correlation between 3-yr avg Winter Severity with 1 yr lag and Abundance",
+    x = "Winter Severity (% of Historical Average 1 April SWE)",
+    y = "Yearly Mean Abundance"
+  ) +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5))
+
+######################## Print
+print(WinterSeverity_N3.1)
+print(correlation_plot_N3.1)
+
+```
+
+## Recruitment - Winter Severity Comparison
+
+### Winter Same Year
+
+```{r}
+
+# combine data fames
+comparison_df_S_B <- B_yearly_avg %>%
+  left_join(avg_swe, by = "Year")
+
+# plot
+WinterSeverity_S_B <- ggplot(comparison_df_S_B, aes(x = Year)) +
+  # frog abundance line
+  geom_line(aes(y = Recruited_Individuals, color = "Individuals Recruited"), size = 1) +
+  geom_point(aes(y = Recruited_Individuals, color = "Individuals Recruited"), size = 2) +
+  # winter severity line
+  geom_line(aes(y = Winter_Severity, color = "Winter Severity Same Year"), linetype = "dashed", size = 1) +
+  geom_point(aes(y = Winter_Severity, color = "Winter Severity Same Year"), size = 2) +
+  # Labels and theme
+  scale_color_manual(
+    name = "Legend",
+    values = c("Individuals Recruited" = "blue", "Winter Severity Same Year" = "red")
+  ) +
+  theme_minimal() +
+  labs(
+    title = "Recruitment and Same-Year Winter Severity",
+    x = "Year",
+    y = "Value"
+  )
+
+# correlation
+correlation_S_B <- cor(comparison_df_S_B$Winter_Severity, comparison_df_S_B$Recruited_Individuals)
+cor_test_S_B <- cor.test(comparison_df_S_B$Winter_Severity, comparison_df_S_B$Recruited_Individuals)
+
+correlation_plot_S_B <- ggplot(data = comparison_df_S_B, aes(x = Winter_Severity, y = Recruited_Individuals)) +
+  geom_point() +
+  geom_smooth(method = "lm" ,se = FALSE) +
+  annotate("text", x = 75, y = 185, label = paste0("Correlation: ", round(correlation_S_B, 2)), size = 5, color = "red") +
+  labs(
+    title = "Correlation between Same-Year Winter Severity and Recruitment",
+    x = "Winter Severity (% of Historical Average 1 April SWE)",
+    y = "Total Yearly Recruitment (Number of individuals)"
+  ) +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5))
+
+print(WinterSeverity_S_B)
+print(correlation_plot_S_B)
+
+```
+
+  ### Winter 1 year ago
+
+```{r}
+
+# combine data fames
+comparison_df_B1 <- B_yearly_avg %>%
   left_join(avg_swe_year_prior, by = "Year")
 
 # plot
-WinterSeverity_Recruitment <- ggplot(comparison_df_2, aes(x = Year)) +
+WinterSeverity_B1 <- ggplot(comparison_df_B1, aes(x = Year)) +
   # frog abundance line
   geom_line(aes(y = Recruited_Individuals, color = "Individuals Recruited"), size = 1) +
   geom_point(aes(y = Recruited_Individuals, color = "Individuals Recruited"), size = 2) +
@@ -174,23 +468,160 @@ WinterSeverity_Recruitment <- ggplot(comparison_df_2, aes(x = Year)) +
     title = "Recruitment and Winter Severity One Year Prior",
     x = "Year",
     y = "Value"
-  )
+  ) +
+  theme(legend.position = c(0.8, 0.2))
 
 # correlation
-correlation2 <- cor(comparison_df_2$Winter_Severity, comparison_df_2$Recruited_Individuals)
-cor_test2 <- cor.test(comparison_df_1$Winter_Severity, comparison_df_2$Recruited_Individuals)
+correlation_B1 <- cor(comparison_df_B1$Winter_Severity, comparison_df_B1$Recruited_Individuals)
+cor_test_B1 <- cor.test(comparison_df_B1$Winter_Severity, comparison_df_B1$Recruited_Individuals)
 
-correlation_plot2 <- ggplot(data = comparison_df_2, aes(x = Winter_Severity, y = Recruited_Individuals)) +
+correlation_plot_B1 <- ggplot(data = comparison_df_B1, aes(x = Winter_Severity, y = Recruited_Individuals)) +
   geom_point() +
   geom_smooth(method = "lm" ,se = FALSE) +
-  annotate("text", x = 75, y = 185, label = paste0("Correlation: ", round(correlation2, 2)), size = 5, color = "red") +
+  annotate("text", x = 75, y = 185, label = paste0("Correlation: ", round(correlation_B1, 2)), size = 5, color = "red") +
   labs(
     title = "Correlation between Winter Severity and Recruitment",
     x = "Winter Severity (% of Historical Average 1 April SWE)",
     y = "Total Yearly Recruitment (Number of individuals)"
   ) +
   theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5),
+        )
+
+print(WinterSeverity_B1)
+print(correlation_plot_B1)
+
+ggsave("WinterSeverityB1.png", plot = WinterSeverity_B1, bg = "white")
+ggsave("CorrelationB1.png", plot = correlation_plot_B1, bg = "white")
+
+```
+
+### Winter 2 years ago
+
+```{r}
+
+# combine data fames
+comparison_df_2_B <- B_yearly_avg %>%
+  left_join(avg_swe_2year_prior, by = "Year")
+
+# plot
+WinterSeverity_2_B <- ggplot(comparison_df_2_B, aes(x = Year)) +
+  # frog abundance line
+  geom_line(aes(y = Recruited_Individuals, color = "Individuals Recruited"), size = 1) +
+  geom_point(aes(y = Recruited_Individuals, color = "Individuals Recruited"), size = 2) +
+  # winter severity line
+  geom_line(aes(y = Winter_Severity, color = "Winter Severity Two Years Prior\n(% of historical avg 1 April SWE)"), linetype = "dashed", size = 1) +
+  geom_point(aes(y = Winter_Severity, color = "Winter Severity Two Years Prior\n(% of historical avg 1 April SWE)"), size = 2) +
+  # Labels and theme
+  scale_color_manual(
+    name = "Legend",
+    values = c("Individuals Recruited" = "blue", "Winter Severity Two Years Prior\n(% of historical avg 1 April SWE)" = "red")
+  ) +
+  theme_minimal() +
+  labs(
+    title = "Recruitment and Winter Severity Two Years Prior",
+    x = "Year",
+    y = "Value"
+  )
+
+# correlation
+correlation_2_B <- cor(comparison_df_2_B$Winter_Severity, comparison_df_2_B$Recruited_Individuals)
+cor_test_2_B <- cor.test(comparison_df_2_B$Winter_Severity, comparison_df_2_B$Recruited_Individuals)
+
+correlation_plot_2_B <- ggplot(data = comparison_df_2_B, aes(x = Winter_Severity, y = Recruited_Individuals)) +
+  geom_point() +
+  geom_smooth(method = "lm" ,se = FALSE) +
+  annotate("text", x = 75, y = 185, label = paste0("Correlation: ", round(correlation_2_B, 2)), size = 5, color = "red") +
+  labs(
+    title = "Correlation between Winter Severity (2-Year lag) and Recruitment",
+    x = "Winter Severity (% of Historical Average 1 April SWE)",
+    y = "Total Yearly Recruitment (Number of individuals)"
+  ) +
+  theme_minimal() +
   theme(plot.title = element_text(hjust = 0.5))
+
+print(WinterSeverity_2_B)
+print(correlation_plot_2_B)
+
+```
+### Three-year rolling average no lag
+
+```{r}
+
+# combine data fames
+comparison_df_B3 <- B_yearly_avg %>%
+  left_join(avg_swe_3yrAvg, by = "Year")
+
+# plot
+WinterSeverity_B3 <- ggplot(comparison_df_B3, aes(x = Year)) +
+  # frog abundance line
+  geom_line(aes(y = Recruited_Individuals, color = "Individuals Recruited"), size = 1) +
+  geom_point(aes(y = Recruited_Individuals, color = "Individuals Recruited"), size = 2) +
+  # winter severity line
+  geom_line(aes(y = swe_3yrAvg, color = "Winter Severity 3 yr avg\n(% of historical avg 1 April SWE)"), linetype = "dashed", size = 1) +
+  geom_point(aes(y = swe_3yrAvg, color = "Winter Severity 3 yr avg\n(% of historical avg 1 April SWE)"), size = 2) +
+  # Labels and theme
+  scale_color_manual(
+    name = "Legend",
+    values = c("Individuals Recruited" = "blue", "Winter Severity 3 yr avg\n(% of historical avg 1 April SWE)" = "red")
+  ) +
+  theme_minimal() +
+  labs(
+    title = "Recruitment and 3-yr avg Winter Severity",
+    x = "Year",
+    y = "Value"
+  )
+
+# correlation
+correlation_B3 <- cor(comparison_df_B3$Recruited_Individuals, comparison_df_B3$swe_3yrAvg)
+cor_test_B3 <- cor.test(comparison_df_B3$Recruited_Individuals, comparison_df_B3$swe_3yrAvg)
+
+correlation_plot_B3 <- ggplot(data = comparison_df_B3, aes(x = swe_3yrAvg, y = Recruited_Individuals)) +
+  geom_point() +
+  geom_smooth(method = "lm" ,se = FALSE) +
+  annotate("text", x = 75, y = 185, label = paste0("Correlation: ", round(correlation_B3, 2)), size = 5, color = "red") +
+  labs(
+    title = "Correlation between 3-yr avg Winter Severity and Recruitment",
+    x = "Winter Severity (% of Historical Average 1 April SWE)",
+    y = "Yearly Mean Abundance"
+  ) +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5))
+
+######################## Print
+print(WinterSeverity_B3)
+print(correlation_plot_B3)
+
+```
+
+
+### Three-year rolling average w/ 1-yr lag
+
+```{r}
+
+# combine data fames
+comparison_df_B3.1 <- B_yearly_avg %>%
+  left_join(avg_swe_3yrAvg_1yrLag, by = "Year")
+
+# plot
+WinterSeverity_B3.1 <- ggplot(comparison_df_B3.1, aes(x = Year)) +
+  # frog abundance line
+  geom_line(aes(y = Recruited_Individuals, color = "Individuals Recruited"), size = 1) +
+  geom_point(aes(y = Recruited_Individuals, color = "Individuals Recruited"), size = 2) +
+  # winter severity line
+  geom_line(aes(y = swe_3yrAvg_1yrLag, color = "Winter Severity 3 yr avg 1 yr lag\n(% of historical avg 1 April SWE)"), linetype = "dashed", size = 1) +
+  geom_point(aes(y = swe_3yrAvg_1yrLag, color = "Winter Severity 3 yr avg 1 yr lag\n(% of historical avg 1 April SWE)"), size = 2) +
+  # Labels and theme
+  scale_color_manual(
+    name = "Legend",
+    values = c("Individuals Recruited" = "blue", "Winter Severity 3 yr avg 1 yr lag\n(% of historical avg 1 April SWE)" = "red")
+  ) +
+  theme_minimal() +
+  labs(
+    title = "Recruitment and 3-yr avg Winter Severity with 1-yr lag",
+    x = "Year",
+    y = "Value"
+  )
 
 ```
 
@@ -210,7 +641,7 @@ comparison_df_3 <- comparison_df_3 %>%
   mutate(Survival_Percentage = Overwinter_Survival_Probability * 100)
 
 # Plot
-ggplot(comparison_df_3, aes(x = Winter)) +
+WinterSeverity_Survival <- ggplot(comparison_df_3, aes(x = Winter)) +
   # survival line
   geom_line(aes(y = Survival_Percentage, color = "Survival Percentage"), size = 1, group = 1) +
   geom_point(aes(y = Survival_Percentage, color = "Survival Percentage"), size = 2) +
@@ -229,5 +660,20 @@ ggplot(comparison_df_3, aes(x = Winter)) +
     y = "Value"
   )
 
-```
+# correlation
+correlation3 <- cor(comparison_df_3$Winter_Severity, comparison_df_3$Overwinter_Survival_Probability)
+cor_test3 <- cor.test(comparison_df_3$Winter_Severity, comparison_df_3$Overwinter_Survival_Probability)
 
+correlation_plot3 <- ggplot(data = comparison_df_3, aes(x = Winter_Severity, y = Survival_Percentage)) +
+  geom_point() +
+  geom_smooth(method = "lm" ,se = FALSE) +
+  annotate("text", x = 75, y = 100, label = paste0("Correlation: ", round(correlation3, 2)), size = 5, color = "red") +
+  labs(
+    title = "Correlation between Winter Severity and Survival",
+    x = "Winter Severity (% of Historical Average 1 April SWE)",
+    y = "Overwinter Survuval Probability"
+  ) +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5))
+
+```
