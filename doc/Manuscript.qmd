@@ -1,7 +1,6 @@
 ---
-title: "manuscript"
-format: html
-editor: visual
+format: pdf
+bibliography: references.bib
 ---
 
 ## Title Title Title
@@ -13,6 +12,14 @@ John Imperato^1^
 ### Abstract
 
 ### Introduction
+
+Amphibians are the most threatened class of vertebrates. Disease, habitat loss, and, increasingly, climate change drive their global decline [@luedtke2023]. The endangered mountain yellow-legged frog species complex (*Rana muscosa* and *R. sierrae*) is emblematic of such declines. **Citation**. These frogs are endemic to the Sierra Nevada and Transverse mountain ranges of California and Nevada, and are characterized by \_\_\_\_\_\_. Non-native fish introductions across their range have severely reduced suitable habitat for the species[@knapp2000], and the fungal pathogen *Batrachochytrium dendrobatadis* (Bd) causes mass mortality and rapid population declines [@vredenburg2010]. As a result, more than 90% of *R. muscosa* and *R. sierrae* populations have been extirpated from their historical range [@vredenburg2007].
+
+Despite these substantial losses, mountain yellow-legged frogs provide rare examples of amphibian resilience in the face of multiple stressors. Following the removal of non-native fish from alpine lakes, *R. muscosa* population density can increase significantly [@vredenburg2004][@knapp2007]. Additionally, some mountain yellow-legged frog populations exhibit resistance to Bd infection and naturally recover despite the pathogen's continued presence in the environment [@knapp2016]. These Bd-persistent populations are increasingly important to recovery efforts for the species. A recent study shows that reintroducing frogs from persistent populations into vacant habitat can establish self-sustaining populations with low long-term extinction probability [@knapp2024]. It is critical, therefore, to study the dynamics of these unique populations to gain insights into how they are persisting in the presence of Bd and to assess their value to future conservation efforts.
+
+Among Bd-persistent mountain yellow-legged frog populations, little is known about the ecology and demographics of those in the northern part of their range [@brown2019]. Compared to their relatively well-studied counterparts in the central and southern Sierra Nevada, northern populations are fewer in number, have lower abundances, utilize a more diverse range of habitat, and occupy lower elevations [@interagency2018]. To implement effective conservation measures for mountain yellow-legged frogs in the northern portion of their range, it is vital to better understand the demographics and dynamics of these rare and understudied disease-persistent populations [@brown2020].
+
+In this study, we describe one such population, located in the \_\_\_\_\_\_\_\_\_\_ area of the Tahoe National Forest, California...
 
 ### Methods
 
