@@ -17,11 +17,31 @@ Amphibians are the most threatened class of vertebrates. Disease, habitat loss, 
 
 Despite these substantial losses, mountain yellow-legged frogs provide rare examples of amphibian resilience in the face of multiple stressors. Following the removal of non-native fish from alpine lakes, *R. muscosa* population density can increase significantly [@vredenburg2004][@knapp2007]. Additionally, some mountain yellow-legged frog populations exhibit resistance to Bd infection and naturally recover despite the pathogen's continued presence in the environment [@knapp2016]. These Bd-persistent populations are increasingly important to recovery efforts for the species. A recent study shows that reintroducing frogs from persistent populations into vacant habitat can establish self-sustaining populations with low long-term extinction probability [@knapp2024]. It is critical, therefore, to study the dynamics of these unique populations to gain insights into how they are persisting in the presence of Bd and to assess their value to future conservation efforts.
 
-Among Bd-persistent mountain yellow-legged frog populations, little is known about the ecology and demographics of those in the northern part of their range [@brown2019]. Compared to their relatively well-studied counterparts in the central and southern Sierra Nevada, northern populations are fewer in number, have lower abundances, utilize a more diverse range of habitat, and occupy lower elevations [@interagency2018]. To implement effective conservation measures for mountain yellow-legged frogs in the northern portion of their range, it is vital to better understand the demographics and dynamics of these rare and understudied disease-persistent populations [@brown2020].
+Among Bd-persistent mountain yellow-legged frog populations, little is known about the ecology and demographics of those in the northern part of their range [@interagency2018][@brown2019]. Compared to their relatively well-studied counterparts in the central and southern Sierra Nevada, northern populations are fewer in number, have lower abundances, utilize a more diverse range of habitat, and occupy lower elevations [@interagency2018]. To implement effective conservation measures for mountain yellow-legged frogs in the northern portion of their range, it is vital to better understand the demographics and dynamics of these rare and understudied disease-persistent populations [@brown2020].
 
-In this study, we describe one such population, located in the \_\_\_\_\_\_\_\_\_\_ area of the Tahoe National Forest, California...
+In this study, we describe one such population, located in the Mossy Pond area of the Tahoe National Forest, California...
 
 ### Methods
+
+**Study area and species**
+
+The Mossy Pond Complex is located in the Tahoe National Forest, north of highway 80 in Nevada County, California. It consists of approximately 60 lakes, ponds, and streams set on granite benches southeast of Fordyce Lake. Elevation ranges from 6,400 feet to 7,100 feet. The study area is a one-square-mile section of the complex, containing the namesake Mossy Pond, its seasonally-flowing outlet stream, and 12 ephemeral ponds. **\*\*Rationale for study area selection\*\*.** The United States Geological Survey (USGS) first detected SNYLF in the complex in 1998, and the California Department of Fish and Wildlife (CDFW) has been monitoring the population since 2001. 
+
+**Capture-mark-recapture sampling**
+
+*Sampling schedule*
+
+\
+
+*Capturing & marking animals*
+
+Field crews captured frogs by hand or dip net, and processed frogs at the point of capture. Crews first scanned each captured frog with a BioMark 601 passive integrated transponder (PIT) tag reader to detect if the frog was marked (i.e., a recapture). Crews then used calipers to measure the snout to urostyle (SUL) length of each captured frog, and released frogs \<40 mm SUL (which are considered subadults) without further processing. Crews continued collecting data on larger (\>40 mm SUL) frogs, which are considered adults. For new adult captures, crews inserted an 8 X 1.4 mm PIT tag under the dorsal skin using methods recommended by McAllister et al. (2004). Crews collected a GPS point (estimated precision error \~3 m) for each capture using a handheld Garmin GPS unit. Crews weighed each adult frog inside a tared plastic bag to the nearest 0.1 g using a Pesola spring scale. For each captured adult individual, crews only collected length and weight data during the first capture event within a three-day primary period. Afterward, if crews captured the same individual on a subsequent day duringthe same primary period, crews only recorded PIT tag, sex, and location data. 
+
+**Population modeling**
+
+\
+\
+**Winter severity calculations**
 
 ### Results
 
