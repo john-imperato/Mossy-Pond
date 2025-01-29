@@ -29,13 +29,15 @@ The Mossy Pond Complex is located in the Tahoe National Forest, north of highway
 
 ### Capture-mark-recapture surveys
 
-Capture-recapture sampling was conducted according to Pollock's [@pollock1982] robust design. Under the robust design, three primary survey periods occurred each summer from 2014 to 2018, each consisting of three consecutive survey days (secondary periods).
+Capture-mark-recapture (CMR) sampling was conducted according to Pollock's [@pollock1982] robust design. Under the robust design, three primary survey periods occurred each summer from 2014 to 2018, each consisting of three consecutive survey days (secondary periods). **More needed?**
 
 Field crews captured frogs by hand or dip net, and processed frogs at the point of capture. Crews first scanned each captured frog with a BioMark 601 passive integrated transponder (PIT) tag reader to detect if the frog was marked (i.e., a recapture). Crews then used calipers to measure the snout to urostyle (SUL) length of each captured frog, and released frogs \<40 mm SUL (which are considered subadults) without further processing. Crews continued collecting data on larger (\>40 mm SUL) frogs, which are considered adults. For new adult captures, crews inserted an 8 X 1.4 mm PIT tag under the dorsal skin using methods recommended by McAllister et al. (2004) [@mcallister2004]. Crews collected a GPS point (estimated precision error \~3 m) for each capture using a handheld Garmin GPS unit. Crews weighed each adult frog inside a tared plastic bag to the nearest 0.1 g using a Pesola spring scale. For each captured adult individual, crews only collected length and weight data during the first capture event within a three-day primary period. Afterward, if crews captured the same individual on a subsequent day during the same primary period, crews only recorded PIT tag, sex, and location data. 
 
 ### Population modeling
 
-\
+We estimated survival probability, detection probability, recruitment of new frogs into the adult population, and adult population size for the Mossy Pond *R. sierrae* population using a site-specific Jolly-Seber CMR model implemented in a Bayesian framework with R statistical software [@R](v4.4.2). Our model was adapted from the mrmr R package [@joseph2019] (https://snarl1.github.io/mrmr/index.html), which was developed for the analysis of robust design CMR data collected from *R. sierrae* populations. The model represents a superpopulation of M individuals whose states (not recruited, alive, dead) and observations (detected, not detected) evolve through time, with any new frogs assumed to arise from local reproduction [@knapp2024]. We assessed model convergence via trace plots and Gelman–Rubin statistics (rhat).
+
+Models copmpared with LOO cross-validation.
 
 ### Winter severity calculations
 
