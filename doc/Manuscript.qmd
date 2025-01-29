@@ -3,15 +3,15 @@ format: pdf
 bibliography: references.bib
 ---
 
-## Title Title Title
+# Title Title Title
 
 John Imperato^1^
 
 ^1^School of the Environment, Yale University, New Haven, CT, 06511
 
-### Abstract
+## Abstract
 
-### Introduction
+## Introduction
 
 Amphibians are the most threatened class of vertebrates. Disease, habitat loss, and, increasingly, climate change drive their global decline [@luedtke2023]. The endangered mountain yellow-legged frog species complex (*Rana muscosa* and *R. sierrae*) is emblematic of such declines. **Citation**. These frogs are endemic to the Sierra Nevada and Transverse mountain ranges of California and Nevada, and are characterized by \_\_\_\_\_\_. Non-native fish introductions across their range have severely reduced suitable habitat for the species[@knapp2000], and the fungal pathogen *Batrachochytrium dendrobatadis* (Bd) causes mass mortality and rapid population declines [@vredenburg2010]. As a result, more than 90% of *R. muscosa* and *R. sierrae* populations have been extirpated from their historical range [@vredenburg2007].
 
@@ -21,30 +21,28 @@ Among Bd-persistent mountain yellow-legged frog populations, little is known abo
 
 In this study, we describe one such population, located in the Mossy Pond area of the Tahoe National Forest, California...
 
-### Methods
+## Methods
 
-**Study area and species**
+### Study area and species
 
 The Mossy Pond Complex is located in the Tahoe National Forest, north of highway 80 in Nevada County, California. It consists of approximately 60 lakes, ponds, and streams set on granite benches southeast of Fordyce Lake. Elevation ranges from 6,400 feet to 7,100 feet. The study area is a one-square-mile section of the complex, containing the namesake Mossy Pond, its seasonally-flowing outlet stream, and 12 ephemeral ponds. **\*\*Rationale for study area selection\*\*.** The United States Geological Survey (USGS) first detected SNYLF in the complex in 1998, and the California Department of Fish and Wildlife (CDFW) has been monitoring the population since 2001. 
 
-**Capture-mark-recapture sampling**
+### Capture-mark-recapture surveys
 
-*Sampling schedule*
+Capture-recapture sampling was conducted according to Pollock's [@pollock1982] robust design. Under the robust design, three primary survey periods occurred each summer from 2014 to 2018, each consisting of three consecutive survey days (secondary periods).
+
+Field crews captured frogs by hand or dip net, and processed frogs at the point of capture. Crews first scanned each captured frog with a BioMark 601 passive integrated transponder (PIT) tag reader to detect if the frog was marked (i.e., a recapture). Crews then used calipers to measure the snout to urostyle (SUL) length of each captured frog, and released frogs \<40 mm SUL (which are considered subadults) without further processing. Crews continued collecting data on larger (\>40 mm SUL) frogs, which are considered adults. For new adult captures, crews inserted an 8 X 1.4 mm PIT tag under the dorsal skin using methods recommended by McAllister et al. (2004) [@mcallister2004]. Crews collected a GPS point (estimated precision error \~3 m) for each capture using a handheld Garmin GPS unit. Crews weighed each adult frog inside a tared plastic bag to the nearest 0.1 g using a Pesola spring scale. For each captured adult individual, crews only collected length and weight data during the first capture event within a three-day primary period. Afterward, if crews captured the same individual on a subsequent day during the same primary period, crews only recorded PIT tag, sex, and location data. 
+
+### Population modeling
+
+\
+
+### Winter severity calculations
 
 \
 
-*Capturing & marking animals*
+## Results
 
-Field crews captured frogs by hand or dip net, and processed frogs at the point of capture. Crews first scanned each captured frog with a BioMark 601 passive integrated transponder (PIT) tag reader to detect if the frog was marked (i.e., a recapture). Crews then used calipers to measure the snout to urostyle (SUL) length of each captured frog, and released frogs \<40 mm SUL (which are considered subadults) without further processing. Crews continued collecting data on larger (\>40 mm SUL) frogs, which are considered adults. For new adult captures, crews inserted an 8 X 1.4 mm PIT tag under the dorsal skin using methods recommended by McAllister et al. (2004). Crews collected a GPS point (estimated precision error \~3 m) for each capture using a handheld Garmin GPS unit. Crews weighed each adult frog inside a tared plastic bag to the nearest 0.1 g using a Pesola spring scale. For each captured adult individual, crews only collected length and weight data during the first capture event within a three-day primary period. Afterward, if crews captured the same individual on a subsequent day duringthe same primary period, crews only recorded PIT tag, sex, and location data. 
+## References
 
-**Population modeling**
-
-\
-\
-**Winter severity calculations**
-
-### Results
-
-### References
-
-### Figures
+## Figures
