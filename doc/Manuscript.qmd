@@ -13,6 +13,26 @@ John Imperato^1^
 
 ## Introduction
 
+The well-documented decline of the endangered Sierra Nevada yellow-legegd frog in its namesake mountain range of California (bunch of citations) is emblematic of the crisis facing amphibians globally (citations). As is the case with numerous other species..the fungal pathogen Bd is the primary driver of SNYLF decline in the Sierra Nevada (citations), and the effects of climate change loom large, especially in an alpine environment expriencing accelerated climate change (mountain ranges are warming faster than other places?) (citation).
+
+Though SNYLF decline fits the gloomy narrative, the examples of resilience and recovery that this species provides do not. Bd will typically wipe out (extirpate?) SNYLF populations (Vredenburg?), but a rare subset of individuals exhibit resistance to the pathogen ('resistant individuals') and contribute to the natural recovery of populations that persist in the presence of Bd (Knapp). These disease-persistent populations have become instrumental to conservation efforts for this species in their provision of resistant individuals as founders to establish new, resilient populations in previously-occupied habitat (Knapp 2024). We have the chance to pull off a rare feat: landscape scale recovery of an endangered species.
+
+To successfully leverage these disease-persistent populations as a conservation resource, we must gain a detailed understanding of their demographics, dynamics, and the factors that influence their viability. Without good information, we can't make smart decisions and we will waste limited resources (Brown xxxx).
+
+The population we focus on in this study-Mossy Pond-provides an excellent opportunity to fill the void of information surrounding this species in the northern portion of its range (cite interagency 2018 and Brown). Weird habitat, funky frogs, and little knowledge, etc..
+
+In this investigation we set out to estimate demographic parameters (getting absolute abundance is really important, as Os for citations on that) and to investigate the rolethat climate plays in population viability. Ultimately, we hope our insights are useful for the management of this paprticualr population, for a deeper understanding of the species as a whole, and as a hint of how climate change may affect alpine amphibian populations in the future.
+
+--------------------------------
+
+By acting as donor populations for the human-facilitated reintroduction of disease-resistant animals into extirpated habitat, these unique Bd persistent populations have become instrumental to conservation efforts.
+
+Some populations of MYLF exhibit resistence to Bd and will recover naturally (citations). These naturally-recovering populations (persistent populations) have become instrumental to human-facilitated conservation efforts, and present an opportunity for landscape scale recovery of an endangered species (Knapp 2024).
+
+What effects may climate have on these recovery efforts?
+
+-------------------------------------------
+
 Amphibians are the most threatened class of vertebrates. Disease, habitat loss, and, increasingly, climate change drive their global decline [@luedtke2023]. The endangered mountain yellow-legged frog species complex (*Rana muscosa* and *R. sierrae*) is emblematic of such declines. **Citation**. These frogs are endemic to the Sierra Nevada and Transverse mountain ranges of California and Nevada, and are characterized by \_\_\_\_\_\_. Non-native fish introductions across their range have severely reduced suitable habitat for the species[@knapp2000], and the fungal pathogen *Batrachochytrium dendrobatadis* (Bd) causes mass mortality and rapid population declines [@vredenburg2010]. As a result, more than 90% of *R. muscosa* and *R. sierrae* populations have been extirpated from their historical range [@vredenburg2007].
 
 Despite these substantial losses, mountain yellow-legged frogs provide rare examples of amphibian resilience in the face of multiple stressors. Following the removal of non-native fish from alpine lakes, *R. muscosa* population density can increase significantly [@vredenburg2004][@knapp2007]. Additionally, some mountain yellow-legged frog populations exhibit resistance to Bd infection and naturally recover despite the pathogen's continued presence in the environment [@knapp2016]. These Bd-persistent populations are increasingly important to recovery efforts for the species. A recent study shows that reintroducing frogs from persistent populations into vacant habitat can establish self-sustaining populations with low long-term extinction probability [@knapp2024]. It is critical, therefore, to study the dynamics of these unique populations to gain insights into how they are persisting in the presence of Bd and to assess their value to future conservation efforts.
@@ -35,7 +55,7 @@ Field crews captured frogs by hand or dip net, and processed frogs at the point 
 
 ### Population modeling
 
-We estimated survival probability, detection probability, recruitment of new frogs into the adult population, and adult population size for the Mossy Pond *R. sierrae* population using a site-specific Jolly-Seber CMR model implemented in a Bayesian framework with R statistical software [@R](v4.4.2). Our model was adapted from the mrmr R package [@joseph2019] (https://snarl1.github.io/mrmr/index.html), which was developed for the analysis of robust design CMR data collected from *R. sierrae* populations. The model represents a superpopulation of M individuals whose states (not recruited, alive, dead) and observations (detected, not detected) evolve through time, with any new frogs assumed to arise from local reproduction [@knapp2024]. We assessed model convergence via trace plots and Gelman–Rubin statistics (rhat).
+We estimated survival probability, detection probability, recruitment of new frogs into the adult population, and adult population size for the Mossy Pond *R. sierrae* population using a site-specific Jolly-Seber CMR model implemented in a Bayesian framework with R statistical software [\@R](v4.4.2). Our model was adapted from the mrmr R package [@joseph2019] (https://snarl1.github.io/mrmr/index.html), which was developed for the analysis of robust design CMR data collected from *R. sierrae* populations. The model represents a superpopulation of M individuals whose states (not recruited, alive, dead) and observations (detected, not detected) evolve through time, with any new frogs assumed to arise from local reproduction [@knapp2024]. We assessed model convergence via trace plots and Gelman–Rubin statistics (rhat).
 
 Models copmpared with LOO cross-validation.
 
