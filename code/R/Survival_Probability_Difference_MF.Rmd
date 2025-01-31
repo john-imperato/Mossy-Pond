@@ -50,7 +50,7 @@ beta_phi2_draws <- phi_draws$`beta_phi[2]`
 
 # Determine number of posterior draws (M) and time periods (T)
 M <- nrow(phi_draws)
-T <- ncol(eps_phi_matrix)
+T <- (ncol(eps_phi_matrix))
 
 # Initialize matrices to store survival probabilities and their differences
 female_survival <- matrix(NA, nrow = M, ncol = T)
@@ -88,7 +88,7 @@ for(m in 1:M){
 
 ```{r}
 
-# Define a helper function to compute summary statistics
+# function to compute summary statistics
 summarize_draws <- function(x) {
   data.frame(
     mean          = mean(x),
@@ -101,16 +101,21 @@ summarize_draws <- function(x) {
 }
 
 # Apply the summary function to each time period's difference
-time_summaries_list <- lapply(1:T, function(t) {
+time_summaries_list <- lapply(2:(T-1), function(t) {
   summarize_draws(diff_survival[, t])
 })
 
+# Convert from factor to numeric via character
+time_summaries_df <- time_summaries_df %>%
+  mutate(time_index = as.numeric(as.character(time_index)))
+
 # Combine the summaries into a single data frame
 time_summaries_df <- bind_rows(time_summaries_list, .id = "time_index") %>%
-  mutate(time_period = paste0("time_", time_index)) %>%
-  select(time_period, everything())
+  mutate(time_index = as.numeric(time_index)) %>%
+  mutate(primary_period = paste("PPs_", time_index, "-", time_index + 1)) %>%
+  select(primary_period, everything())
 
-# View the summaries
+# View the summaries# Viewpaste0() the summaries
 print(time_summaries_df)
 
 ```
@@ -118,39 +123,38 @@ print(time_summaries_df)
 
 ```{r}
 
-# plot
-
-# Ensure 'time_period' is an ordered factor (if not already done)
+# Ensure 'primary_period' is an ordered factor to maintain chronological order in the plot
 time_summaries_df <- time_summaries_df %>%
-  mutate(time_period = factor(time_period, 
-                              levels = paste0("time_", 1:T),  # Define the correct chronological order
-                              ordered = TRUE))
+  mutate(primary_period = factor(primary_period, 
+                                 levels = unique(primary_period), 
+                                 ordered = TRUE))
 
 # Verify the ordering
-print(levels(time_summaries_df$time_period))
+print(levels(time_summaries_df$primary_period))
 
 # Create the plot
-difference_plot <- ggplot(time_summaries_df, aes(x = time_period, y = mean)) +
+difference_plot <- ggplot(time_summaries_df, aes(x = primary_period, y = mean)) +
   geom_point(color = "blue", size = 2) +  # Increased point size for better visibility
   geom_errorbar(aes(ymin = lower95, ymax = upper95), width = 0.2, color = "blue") +
   geom_hline(yintercept = 0, linetype = "dashed", color = "red") +
   labs(
-    title = "Difference in Survival Probabilities (Male - Female) Over Time",
-    x = "Time Period",
+    title = "Difference in Survival Probabilities (M - F) Between Primary Periods",
+    x = "Primary Period",
     y = "Difference in Survival Probability"
   ) +
   theme(
     axis.text.x = element_text(angle = 45, hjust = 1),  # Tilt x-axis labels for readability
     plot.title = element_text(hjust = 0.5, size = 14, face = "bold")  # Center and style the title
   ) +
-  scale_x_discrete(limits = paste0("time_", 1:T))  # Ensure correct order on x-axis
+  # Correct the x-axis limits to match 'primary_period' labels
+  scale_x_discrete(limits = levels(time_summaries_df$primary_period))
 
 # Display the plot
 print(difference_plot)
 
 # Save the plot to a file
-ggsave("/Users/johnimperato/Desktop/Mossy-Pond_companion/difference_in_survival_probabilities.png", plot = difference_plot, width = 10, height = 6, dpi = 300)
-
+ggsave("/Users/johnimperato/Desktop/Mossy-Pond_companion/difference_in_survival_probabilities.png", 
+       plot = difference_plot, width = 10, height = 6, dpi = 300)
 ```
 
 
