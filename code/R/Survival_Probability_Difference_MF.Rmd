@@ -115,28 +115,10 @@ print(time_summaries_df)
 
 ```
 
-```{r}
-
-# Plot the difference with credible intervals
-ggplot(time_summaries_df, aes(x = time_period, y = mean)) +
-  geom_point(color = "blue") +
-  geom_errorbar(aes(ymin = lower95, ymax = upper95), width = 0.2, color = "blue") +
-  geom_hline(yintercept = 0, linetype = "dashed", color = "red") +
-  labs(
-    title = "Difference in Survival Probabilities (Male - Female) Over Time",
-    x = "Time Period",
-    y = "Difference in Survival Probability"
-  ) +
-  theme_minimal() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
-
-```
 
 ```{r}
 
-###############################################################################
-# 5. Plot the Differences with Correct Time Order
-###############################################################################
+# plot
 
 # Ensure 'time_period' is an ordered factor (if not already done)
 time_summaries_df <- time_summaries_df %>%
@@ -157,7 +139,6 @@ difference_plot <- ggplot(time_summaries_df, aes(x = time_period, y = mean)) +
     x = "Time Period",
     y = "Difference in Survival Probability"
   ) +
-  theme_minimal() +
   theme(
     axis.text.x = element_text(angle = 45, hjust = 1),  # Tilt x-axis labels for readability
     plot.title = element_text(hjust = 0.5, size = 14, face = "bold")  # Center and style the title
@@ -168,7 +149,7 @@ difference_plot <- ggplot(time_summaries_df, aes(x = time_period, y = mean)) +
 print(difference_plot)
 
 # Save the plot to a file
-ggsave("difference_in_survival_probabilities.png", plot = difference_plot, width = 10, height = 6, dpi = 300)
+ggsave("/Users/johnimperato/Desktop/Mossy-Pond_companion/difference_in_survival_probabilities.png", plot = difference_plot, width = 10, height = 6, dpi = 300)
 
 ```
 
