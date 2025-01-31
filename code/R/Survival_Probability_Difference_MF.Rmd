@@ -1,0 +1,189 @@
+---
+title: "Survival Probability Difference M-F"
+output: html_document
+date: "2025-01-30"
+---
+
+```{r}
+
+library(data.table)
+library(tidyverse)
+library(ggplot2)
+
+```
+
+## Extract draws from the model with sex as a survival covariate
+
+```{r}
+
+# laod the model with sex as a covariate of survival
+mod <- readRDS("/Users/johnimperato/Desktop/Mossy-Pond_companion/sex_survival_covariate_model.rds")
+
+# extract the draws of the relevant variables
+phi_draws <- as.data.table(mod_sex$m_fit$draws(variables = c('beta_phi', 'eps_phi'), format = 'draws_df'))
+
+# add indexing row
+phi_draws <- phi_draws %>%
+  mutate(draw_id = row_number()) %>%
+  select(draw_id, everything()) 
+
+```
+
+```{r}
+
+# Identify all 'eps_phi[t]' columns using regex
+eps_phi_cols <- grep("^eps_phi\\[", names(phi_draws), value = TRUE)
+
+# Extract 'eps_phi[t]' into a separate matrix (M x T)
+eps_phi_matrix <- as.matrix(phi_draws %>% select(all_of(eps_phi_cols)))
+
+# Verify dimensions (M = number of draws, T = number of time periods)
+dim(eps_phi_matrix)  # Should return c(M, T)
+
+# Extract 'beta_phi[1]' and 'beta_phi[2]' as numeric vectors
+beta_phi1_draws <- phi_draws$`beta_phi[1]`
+beta_phi2_draws <- phi_draws$`beta_phi[2]`
+
+```
+
+```{r}
+
+# Determine number of posterior draws (M) and time periods (T)
+M <- nrow(phi_draws)
+T <- ncol(eps_phi_matrix)
+
+# Initialize matrices to store survival probabilities and their differences
+female_survival <- matrix(NA, nrow = M, ncol = T)
+male_survival   <- matrix(NA, nrow = M, ncol = T)
+diff_survival   <- matrix(NA, nrow = M, ncol = T)
+
+# Assign column names for clarity (optional)
+colnames(female_survival) <- paste0("time_", 1:T)
+colnames(male_survival)   <- paste0("time_", 1:T)
+colnames(diff_survival)   <- paste0("time_", 1:T)
+
+# Compute survival probabilities and their differences
+for(m in 1:M){
+  for(t in 1:T){
+    # Logit-scale survival for females: beta_phi[1] + eps_phi[t]
+    logit_female <- beta_phi1_draws[m] + eps_phi_matrix[m, t]
+    
+    # Logit-scale survival for males: beta_phi[1] + beta_phi[2] + eps_phi[t]
+    logit_male <- beta_phi1_draws[m] + beta_phi2_draws[m] + eps_phi_matrix[m, t]
+    
+    # Convert logits to probabilities using the logistic function
+    p_female <- 1 / (1 + exp(-logit_female))
+    p_male   <- 1 / (1 + exp(-logit_male))
+    
+    # Store the probabilities
+    female_survival[m, t] <- p_female
+    male_survival[m, t]   <- p_male
+    
+    # Compute and store the difference (male - female)
+    diff_survival[m, t]   <- p_male - p_female
+  }
+}
+
+```
+
+```{r}
+
+# Define a helper function to compute summary statistics
+summarize_draws <- function(x) {
+  data.frame(
+    mean          = mean(x),
+    median        = median(x),
+    sd            = sd(x),
+    lower95       = quantile(x, 0.025),
+    upper95       = quantile(x, 0.975),
+    prob_positive = mean(x > 0)   # Proportion of draws where male > female
+  )
+}
+
+# Apply the summary function to each time period's difference
+time_summaries_list <- lapply(1:T, function(t) {
+  summarize_draws(diff_survival[, t])
+})
+
+# Combine the summaries into a single data frame
+time_summaries_df <- bind_rows(time_summaries_list, .id = "time_index") %>%
+  mutate(time_period = paste0("time_", time_index)) %>%
+  select(time_period, everything())
+
+# View the summaries
+print(time_summaries_df)
+
+```
+
+```{r}
+
+# Plot the difference with credible intervals
+ggplot(time_summaries_df, aes(x = time_period, y = mean)) +
+  geom_point(color = "blue") +
+  geom_errorbar(aes(ymin = lower95, ymax = upper95), width = 0.2, color = "blue") +
+  geom_hline(yintercept = 0, linetype = "dashed", color = "red") +
+  labs(
+    title = "Difference in Survival Probabilities (Male - Female) Over Time",
+    x = "Time Period",
+    y = "Difference in Survival Probability"
+  ) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+```
+
+```{r}
+
+###############################################################################
+# 5. Plot the Differences with Correct Time Order
+###############################################################################
+
+# Ensure 'time_period' is an ordered factor (if not already done)
+time_summaries_df <- time_summaries_df %>%
+  mutate(time_period = factor(time_period, 
+                              levels = paste0("time_", 1:T),  # Define the correct chronological order
+                              ordered = TRUE))
+
+# Verify the ordering
+print(levels(time_summaries_df$time_period))
+
+# Create the plot
+difference_plot <- ggplot(time_summaries_df, aes(x = time_period, y = mean)) +
+  geom_point(color = "blue", size = 2) +  # Increased point size for better visibility
+  geom_errorbar(aes(ymin = lower95, ymax = upper95), width = 0.2, color = "blue") +
+  geom_hline(yintercept = 0, linetype = "dashed", color = "red") +
+  labs(
+    title = "Difference in Survival Probabilities (Male - Female) Over Time",
+    x = "Time Period",
+    y = "Difference in Survival Probability"
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1),  # Tilt x-axis labels for readability
+    plot.title = element_text(hjust = 0.5, size = 14, face = "bold")  # Center and style the title
+  ) +
+  scale_x_discrete(limits = paste0("time_", 1:T))  # Ensure correct order on x-axis
+
+# Display the plot
+print(difference_plot)
+
+# Save the plot to a file
+ggsave("difference_in_survival_probabilities.png", plot = difference_plot, width = 10, height = 6, dpi = 300)
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
