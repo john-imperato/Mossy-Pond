@@ -13,7 +13,9 @@ John Imperato^1^
 
 ## Introduction
 
-The well-documented decline of the endangered Sierra Nevada yellow-legegd frog in its namesake mountain range (bunch of citations) is emblematic of the crisis facing amphibians globally (citations). As is the case with numerous other species...the fungal pathogen Bd is the primary driver of SNYLF decline in the Sierra Nevada (citations), and the effects of climate change loom large-yet remain understudied- especially in an alpine environment expriencing accelerated climate change (mountain ranges are warming faster than other places?) (citation).
+The well-documented decline of the endangered Sierra Nevada yellow-legegd frog in its namesake mountain range (bunch of citations) is emblematic of the crisis facing amphibians globally (citations). As is the case with numerous other species...the fungal pathogen Bd is a primary driver of SNYLF decline in the Sierra Nevada (citations), and the effects of climate change loom large-yet remain understudied- especially in an alpine environment expriencing accelerated climate change (mountain ranges are warming faster than other places?) (citation).
+
+-   get rid of climate *change* here. Introduce just climate somewhere in the intro, then get into climate *change* later, like int he discussion.
 
 Though SNYLF decline fits the gloomy narrative, the examples of resilience and recovery that this species provides do not. Bd will typically wipe out (extirpate?) SNYLF populations (Vredenburg?), but a rare subset of individuals exhibit resistance to the pathogen ('resistant individuals') and contribute to the natural recovery of populations that persist in the presence of Bd (Knapp). These disease-persistent populations have become instrumental to conservation efforts for this species in their provision of resistant individuals as founders to establish new, resilient populations in previously-occupied habitat (Knapp 2024). We have the chance to pull off a rare feat: landscape scale recovery of an endangered species.
 
