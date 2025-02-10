@@ -220,154 +220,121 @@ model {
                        t_intro, removed, t_remove, prim_idx, any_surveys, J,
                        j_idx, Y, Jtot, T);
 }
+
+//==============================================================================
 generated quantities {
-  array[M, T] int<lower=1, upper=3> s; // latent state
+  array[M, T] int<lower=1, upper=3> s; // Latent state
   int<lower=0> Nsuper; // Superpopulation size
   array[Tm1] int<lower=0> N; // Actual population size
   array[Tm1] int<lower=0> B; // Number of entries
-  
-// IMPERATO_2024NOV11  generate detection and survival probabilities
-    // Detection probability by survey
-  vector[Jtot] p;
-    // Survival probability by primary period
-  vector[T - 2] phi_est; 
-  
-// IMPERATO_2024NOV20 generate log likelihood for each individual
+  vector[T] phi_out; // Survival probability for all frogs per period
+  vector[Jtot] p; // Detection probability by survey
   vector[M] log_lik;  // Log-likelihood for each individual
-  
-  // Calculate p as the inverse logit of logit_detect for each session
+
+  // Calculate detection probability for each session
   for (j in 1:Jtot) {
     p[j] = inv_logit(logit_detect[j]);
   }
-  
-  // Calculate phi for each primary period
-    // NEED TO CONFIRM FIRST AND LAST PHI ESTIMATES ARE BOUNDARY CONDITIONS
-  for (t in 2:(T - 1)) {
-    phi_est[t - 1] = inv_logit(beta_phi[1] + eps_phi[t]); // Adjust indexing to store values in phi_est (drops boundary conditions(?))
-  }
-  
-for (i in 1:M) {
-    matrix[T, 3] forward_probabilities;
 
-    // Compute forward probabilities for individual i
-    forward_probabilities = forward_prob(i, X_surv, beta_phi, eps_phi,
-                                         logit_detect, lambda, gam_init,
-                                         introduced, t_intro, removed,
-                                         t_remove, prim_idx, any_surveys,
-                                         J, j_idx, Y, Jtot, T);
-
-    // Calculate log-likelihood for individual i
-    log_lik[i] = log(sum(forward_probabilities[T, :]));
+  // Compute survival probability for each primary period interval
+  for (t in 1:T) {
+    phi_out[t] = inv_logit(beta_phi[1] + eps_phi[t]); 
   }
 
-  
   {
     array[3, T, 3] real ps;
     vector[T] phi;
     vector[3] tmp;
     matrix[T, 3] forward_probabilities;
-    // s = 1 :: not recruited
-    // s = 2 :: alive
-    // s = 3 :: dead
-    
-    // define probs of state S(t+1) | S(t)
-    // first index: S(t)
-    // second index: individual
-    // third index: t
-    // fourth index: S(t + 1)
-    for (i in 1 : M) {
-      // fill in shared values
-      for (t in 1 : T) {
-        phi[t] = inv_logit(X_surv[i,  : ] * beta_phi + eps_phi[t]);
-        ps[1, t, 3] = 0; // can't die before being alive
-        ps[2, t, 1] = 0; // can't unenter population
+
+    for (i in 1:M) {
+      for (t in 1:T) {
+        phi[t] = inv_logit(X_surv[i, :] * beta_phi + eps_phi[t]);
+        ps[1, t, 3] = 0; // Can't die before being alive
+        ps[2, t, 1] = 0; // Can't unenter population
         ps[3, t, 1] = 0;
-        ps[2, t, 2] = phi[t]; // survive
-        ps[2, t, 3] = 1 - phi[t]; // death
-        ps[3, t, 2] = 0; // cannot un-die
-        ps[3, t, 3] = 1; // dead stay dead
+        ps[2, t, 2] = phi[t]; // Survive
+        ps[2, t, 3] = 1 - phi[t]; // Death
+        ps[3, t, 2] = 0; // Cannot un-die
+        ps[3, t, 3] = 1; // Dead stay dead
       }
-      
+
       if (introduced[i]) {
-        // individual has been introduced
-        // zero probability of recruiting through t_intro - 1
-        for (t in 1 : (t_intro[i] - 1)) {
+        for (t in 1:(t_intro[i] - 1)) {
           ps[1, t, 1] = 1;
           ps[1, t, 2] = 0;
           ps[1, t, 3] = 0;
         }
-        
-        // timestep of introduction has Pr(recruiting) = 1
         ps[1, t_intro[i], 1] = 0;
         ps[1, t_intro[i], 2] = 1;
         ps[1, t_intro[i], 3] = 0;
-        
-        // to avoid NA values, fill in remaining recruitment probs (though they
-        // are irrelevant for the likelihood)
-        for (t in (t_intro[i] + 1) : T) {
+        for (t in (t_intro[i] + 1):T) {
           ps[1, t, 1] = 1;
           ps[1, t, 2] = 0;
           ps[1, t, 3] = 0;
         }
       } else {
-        for (t in 1 : T) {
+        for (t in 1:T) {
           ps[1, t, 1] = 1 - lambda[t];
           ps[1, t, 2] = lambda[t];
           ps[1, t, 3] = 0;
         }
       }
-      
+
       if (removed[i]) {
         if (t_remove[i] < T) {
           ps[2, t_remove[i] + 1, 2] = 0;
           ps[2, t_remove[i] + 1, 3] = 1;
         }
       }
-      
-      // backward sampling
+
+      // Backward sampling
       forward_probabilities = forward_prob(i, X_surv, beta_phi, eps_phi,
                                            logit_detect, lambda, gam_init,
                                            introduced, t_intro, removed,
                                            t_remove, prim_idx, any_surveys,
                                            J, j_idx, Y, Jtot, T);
-      s[i, T] = categorical_rng(forward_probabilities[T,  : ]'
-                                / sum(forward_probabilities[T,  : ]));
-      
-      for (t_rev in 1 : Tm1) {
+      s[i, T] = categorical_rng(forward_probabilities[T, :]'
+                                / sum(forward_probabilities[T, :]));
+
+      for (t_rev in 1:Tm1) {
         int t = T - t_rev;
         int tp1 = t + 1;
-        
-        tmp = forward_probabilities[t,  : ]'
-              .* to_vector(ps[ : , tp1, s[i, tp1]]);
+
+        tmp = forward_probabilities[t, :]'
+              .* to_vector(ps[:, tp1, s[i, tp1]]);
         s[i, t] = categorical_rng(tmp / sum(tmp));
       }
-    } // end loop over individuals
-  } // end temporary scope
-  
+
+      // Compute log-likelihood per individual
+      log_lik[i] = log(sum(forward_probabilities[T, :]));
+    }
+  }
+
   {
     array[M, Tm1] int al;
     array[M, Tm1] int d;
     array[M] int alive;
     array[M] int w;
-    
-    for (i in 1 : M) {
-      for (t in 2 : T) {
+
+    for (i in 1:M) {
+      for (t in 2:T) {
         al[i, t - 1] = s[i, t] == 2;
       }
-      for (t in 1 : Tm1) {
+      for (t in 1:Tm1) {
         d[i, t] = s[i, t] == al[i, t];
       }
       alive[i] = sum(al[i]);
     }
-    
-    for (t in 1 : Tm1) {
-      N[t] = sum(al[ : , t]);
-      B[t] = sum(d[ : , t]);
+
+    for (t in 1:Tm1) {
+      N[t] = sum(al[:, t]);
+      B[t] = sum(d[:, t]);
     }
-    for (i in 1 : M) {
+
+    for (i in 1:M) {
       w[i] = 1 - !alive[i];
     }
     Nsuper = sum(w);
   }
 }
-
