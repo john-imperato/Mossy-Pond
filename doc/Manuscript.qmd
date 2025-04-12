@@ -1,6 +1,8 @@
 ---
 format: pdf
 bibliography: references.bib
+execute: 
+  echo: true
 ---
 
 # Title Title Title
@@ -13,59 +15,125 @@ John Imperato^1^
 
 ## Introduction
 
-The well-documented decline of the endangered Sierra Nevada yellow-legegd frog in its namesake mountain range (bunch of citations) is emblematic of the crisis facing amphibians globally (citations). As is the case with numerous other species...the fungal pathogen Bd is a primary driver of SNYLF decline in the Sierra Nevada (citations), and the effects of climate change loom large-yet remain understudied- especially in an alpine environment expriencing accelerated climate change (mountain ranges are warming faster than other places?) (citation).
+Amphibians continue to experience unprecedented global declines, with infectious diseases emerging as primary drivers of biodiversity loss (Luedtke et al. 2023). Chytridiomycosis, caused by the fungal pathogen *Batrachochytrium dendrobatidis* (Bd), has been directly implicated in the decline or extinction of approximately 200 amphibian species across six continents (Skerratt et al. 2007). Amphibian populations exhibit highly variable responses to Bd infection; some appear relatively unaffected, others rapidly succumb to extinction, some persist at chronically low numbers, and a few rare cases demonstrate population recovery following severe declines (Lips 2016). The mechanisms underlying persistence or recovery in Bd-affected populations remain incompletely understood and likely involve complex interactions among environmental, evolutionary, immunological, and demographic factors (Scheele et al. 2017).
 
--   get rid of climate *change* here. Introduce just climate somewhere in the intro, then get into climate *change* later, like int he discussion.
+The mountain yellow-legged frog species complex (*Rana sierrae* and *R. muscosa*), endemic to California's Sierra Nevada and Transverse mountain ranges, provides one of the most thoroughly documented examples of amphibian decline, persistence, and recovery in the face of Bd infection. Beginning in the late 1970s, Bd spread across the Sierra Nevada, causing widespread extirpations of mountain yellow-legged frog populations (Vredenburg et al. 2010). By the early 2000s, these frogs had disappeared from over 90% of their historical range due to Bd impacts, compounded by habitat degradation and non-native fish introductions (Knapp 2000; Vredenburg et al. 2007). However, unlike many other amphibian species affected by chytridiomycosis, the mountain yellow-legged frog story did not end with extinction. A small subset of populations survived their initial contact with Bd and, after decades of decline, began exhibiting increases in abundance and apparent resistance to infection (Knapp et al. 2016). These dynamics align with patterns of evolutionary rescue (Carlson et al. 2014), wherein a species rapidly acquires adaptive genetic variation that restores demographic viability in the presence of a persistent threat (Knapp et al. 2024).
 
-Though SNYLF decline fits the gloomy narrative, the examples of resilience and recovery that this species provides do not. Bd will typically wipe out (extirpate?) SNYLF populations (Vredenburg?), but a rare subset of individuals exhibit resistance to the pathogen ('resistant individuals') and contribute to the natural recovery of populations that persist in the presence of Bd (Knapp). These disease-persistent populations have become instrumental to conservation efforts for this species in their provision of resistant individuals as founders to establish new, resilient populations in previously-occupied habitat (Knapp 2024). We have the chance to pull off a rare feat: landscape scale recovery of an endangered species.
+While research has thoroughly described this shift from decline to recovery at broader geographic scales, fine-grained demographic studies at the individual population level remain scarce. Understanding the mechanisms and ecological processes underlying population recovery requires detailed demographic data at fine spatial and temporal resolutions. Unfortunately, such studies are time and resource-intensive, resulting in relatively few well-documented examples. Furthermore, most detailed demographic studies have concentrated in the southern portion of the species' range, primarily within or south of Yosemite National Park (Fellers et al. 2013; Joseph and Knapp 2018). Relatively little is known about population dynamics in the northern Sierra Nevada (MYLF ITT 2018), an area characterized by smaller, lower-elevation frog populations occupying more heterogeneous habitats (Brown et al. 2020).
 
-To successfully leverage these disease-persistent populations as conservation resources, we must gain a detailed understanding of their demographics, dynamics, and the factors that influence their viability. Without good information, we can't make smart decisions and we will waste limited resources (Brown xxxx).
+To address these knowledge gaps, we conducted a five-year capture-mark-recapture (CMR) study of a Bd-persistent population of *R. sierrae* in California's Tahoe National Forest. Our objectives were to estimate demographic parameters critical for understanding population dynamics, including abundance, survival, recruitment, and detection probabilities. By quantifying these demographic parameters at a fine scale, we sought to elucidate the ecological processes supporting persistence and recovery in amphibian populations living with endemic Bd infection. Additionally, we examined how climatic variables influence these demographic parameters, as climate is expected to be a primary driver of population dynamics in these high-elevation systems where Bd has become an established component of the ecosystem.
 
-The population we focus on in this study-Mossy Pond-provides an excellent opportunity to fill the void of information around disease-persistent populations of this species in the northern portion of its range (cite interagency 2018 and Brown). Pop description: Weird habitat, funky frogs, and little knowledge, etc.. Complexity of habitat here is representative of northern pops generally: streams, complexity, etc.
-
-In this investigation we set out to estimate demographic parameters (getting absolute abundance is really important, as Os for citations on that) and to investigate the (factors that influence population viability in the Bd-persistent state) (role that climate plays in population viability). Ultimately, we hope our insights are useful for the management of this paprticualr population, for a deeper understanding of the species as a whole, and as a hint of how climate change may affect alpine amphibian populations in the future.
-
---------------------------------
-
-By acting as donor populations for the human-facilitated reintroduction of disease-resistant animals into extirpated habitat, these unique Bd persistent populations have become instrumental to conservation efforts.
-
-Some populations of MYLF exhibit resistence to Bd and will recover naturally (citations). These naturally-recovering populations (persistent populations) have become instrumental to human-facilitated conservation efforts, and present an opportunity for landscape scale recovery of an endangered species (Knapp 2024).
-
-What effects may climate have on these recovery efforts?
-
--------------------------------------------
-
-Amphibians are the most threatened class of vertebrates. Disease, habitat loss, and, increasingly, climate change drive their global decline [@luedtke2023]. The endangered mountain yellow-legged frog species complex (*Rana muscosa* and *R. sierrae*) is emblematic of such declines. **Citation**. These frogs are endemic to the Sierra Nevada and Transverse mountain ranges of California and Nevada, and are characterized by \_\_\_\_\_\_. Non-native fish introductions across their range have severely reduced suitable habitat for the species[@knapp2000], and the fungal pathogen *Batrachochytrium dendrobatadis* (Bd) causes mass mortality and rapid population declines [@vredenburg2010]. As a result, more than 90% of *R. muscosa* and *R. sierrae* populations have been extirpated from their historical range [@vredenburg2007].
-
-Despite these substantial losses, mountain yellow-legged frogs provide rare examples of amphibian resilience in the face of multiple stressors. Following the removal of non-native fish from alpine lakes, *R. muscosa* population density can increase significantly [@vredenburg2004][@knapp2007]. Additionally, some mountain yellow-legged frog populations exhibit resistance to Bd infection and naturally recover despite the pathogen's continued presence in the environment [@knapp2016]. These Bd-persistent populations are increasingly important to recovery efforts for the species. A recent study shows that reintroducing frogs from persistent populations into vacant habitat can establish self-sustaining populations with low long-term extinction probability [@knapp2024]. It is critical, therefore, to study the dynamics of these unique populations to gain insights into how they are persisting in the presence of Bd and to assess their value to future conservation efforts.
-
-Among Bd-persistent mountain yellow-legged frog populations, little is known about the ecology and demographics of those in the northern part of their range [@interagency2018][@brown2019]. Compared to their relatively well-studied counterparts in the central and southern Sierra Nevada, northern populations are fewer in number, have lower abundances, utilize a more diverse range of habitat, and occupy lower elevations [@interagency2018]. To implement effective conservation measures for mountain yellow-legged frogs in the northern portion of their range, it is vital to better understand the demographics and dynamics of these rare and understudied disease-persistent populations [@brown2020].
-
-In this study, we describe one such population, located in the Mossy Pond area of the Tahoe National Forest, California...
+These Bd-persistent populations have significant conservation implications for recovery efforts of this endangered species. Recent research has demonstrated that individuals from these naturally recovering populations can serve as effective founders for reintroduction programs, establishing self-sustaining populations with reduced extinction probability when translocated to previously occupied habitats (Knapp et al. 2024). This approach leverages the apparent disease resistance that has evolved in these populations, potentially enabling landscape-scale recovery. Our demographic study provides critical information to support such conservation interventions, particularly for the understudied northern Sierra Nevada populations. By quantifying vital rates and identifying factors that influence population viability in Bd-endemic environments, our results can inform selection of source populations, optimal timing of translocations, and post-translocation monitoring protocols. This knowledge is essential for developing effective, evidence-based conservation strategies for mountain yellow-legged frogs throughout their range.
 
 ## Methods
 
 ### Study area and species
 
-The Mossy Pond Complex is located in the Tahoe National Forest, north of highway 80 in Nevada County, California. It consists of approximately 60 lakes, ponds, and streams set on granite benches southeast of Fordyce Lake. Elevation ranges from 6,400 feet to 7,100 feet. The study area is a one-square-mile section of the complex, containing the namesake Mossy Pond, its seasonally-flowing outlet stream, and 12 ephemeral ponds. **\*\*Rationale for study area selection\*\*.** The United States Geological Survey (USGS) first detected SNYLF in the complex in 1998, and the California Department of Fish and Wildlife (CDFW) has been monitoring the population since 2001. 
+The Mossy Pond Complex is located in the Tahoe National Forest, north of highway 80 in Nevada County, California. It consists of approximately 60 lakes, ponds, and streams set on granite benches southeast of Fordyce Lake. Elevation ranges from 6,400 feet to 7,100 feet. The study area is a one-square-mile section of the complex, containing the namesake Mossy Pond, its seasonally-flowing outlet stream, and 12 ephemeral ponds. **\*\*Rationale for study area selection\*\*.**
+
+The United States Geological Survey (USGS) first detected SNYLF in the complex in 1998, and the California Department of Fish and Wildlife (CDFW) has been monitoring the population since 2001.
+
+### Bd testing
 
 ### Capture-mark-recapture surveys
 
-Capture-mark-recapture (CMR) sampling was conducted according to Pollock's [@pollock1982] robust design. Under the robust design, three primary survey periods occurred each summer from 2014 to 2018, each consisting of three consecutive survey days (secondary periods). **More needed?**
+Capture-mark-recapture (CMR) sampling was conducted according to Pollock's robust design [@pollock1982]. Under the robust design, three primary survey periods occurred each summer from 2014 to 2018, each consisting of three consecutive survey days (secondary periods). **More needed?**
 
 Field crews captured frogs by hand or dip net, and processed frogs at the point of capture. Crews first scanned each captured frog with a BioMark 601 passive integrated transponder (PIT) tag reader to detect if the frog was marked (i.e., a recapture). Crews then used calipers to measure the snout to urostyle (SUL) length of each captured frog, and released frogs \<40 mm SUL (which are considered subadults) without further processing. Crews continued collecting data on larger (\>40 mm SUL) frogs, which are considered adults. For new adult captures, crews inserted an 8 X 1.4 mm PIT tag under the dorsal skin using methods recommended by McAllister et al. (2004) [@mcallister2004]. Crews collected a GPS point (estimated precision error \~3 m) for each capture using a handheld Garmin GPS unit. Crews weighed each adult frog inside a tared plastic bag to the nearest 0.1 g using a Pesola spring scale. For each captured adult individual, crews only collected length and weight data during the first capture event within a three-day primary period. Afterward, if crews captured the same individual on a subsequent day during the same primary period, crews only recorded PIT tag, sex, and location data. 
 
-### Population modeling
+### Statistical Analysis
 
-We estimated survival probability, detection probability, recruitment of new frogs into the adult population, and adult population size for the Mossy Pond *R. sierrae* population using a site-specific Jolly-Seber CMR model implemented in a Bayesian framework with R statistical software [\@R](v4.4.2). Our model was adapted from the mrmr R package [@joseph2019] (https://snarl1.github.io/mrmr/index.html), which was developed for the analysis of robust design CMR data collected from *R. sierrae* populations. The model represents a superpopulation of M individuals whose states (not recruited, alive, dead) and observations (detected, not detected) evolve through time, with any new frogs assumed to arise from local reproduction [@knapp2024]. We assessed model convergence via trace plots and Gelman–Rubin statistics (rhat).
+We estimated survival probability, detection probability, recruitment of new frogs into the adult population, and adult population size for the Mossy Pond *R. sierrae* population using a site-specific Jolly-Seber CMR model implemented in a Bayesian framework with R statistical software \[[\@R](v4.4.2)\]. Our model was adapted from the mrmr R package [@joseph2019] (https://snarl1.github.io/mrmr/index.html), which was developed for the analysis of robust design CMR data collected from *R. sierrae* populations. The model represents a superpopulation of M individuals whose states (not recruited, alive, dead) and observations (detected, not detected) evolve through time, with any new frogs assumed to arise from local reproduction [@knapp2024]. We assessed model convergence via trace plots and Gelman–Rubin statistics (rhat).
 
-Models copmpared with LOO cross-validation.
+**Model selection and model comparison with LOO cross-validation.**
+
+To extend our analysis and investigate the environmental drivers of variation in our estimated population parameters, we employed a two-stage Bayesian framework. First, we obtained full posterior distributions of the values of key population parameters—recruitment, abundance, and survival—from our mark-recapture model (described above). In the second stage, we propagated this uncertainty into subsequent analyses by performing regression and correlation analyses on the full set of posterior draws. In one approach, we calculated the Pearson correlation coefficient between winter severity (lagged by one year) and recruitment for each draw, resulting in a posterior distribution of correlation coefficients that summarizes the strength and direction of the association. In another approach, we performed separate linear regressions on each draw to derive a distribution of regression coefficients. Both methods allowed us to integrate the uncertainty from the capture–recapture model into our inference on the effects of environmental variables, ensuring that our conclusions about the relationship between winter severity and recruitment reflect the full uncertainty of the underlying estimates.
+
+Our model tracks survival at the individual level, and we computed a population-wide probability of surviving the interval between primary periods by summing those individual probabilities and dividing by the total number of frogs in the superpopulation (*M*).
+
+To complete analyses in an annual framework (i.e., investigate the relationship between winter severity and recruitment), we needed to aggregate each aprameter to an annual value. .... For recruitment, posterior draws were extracted from the model output and then aggregated by summing estimates across primary periods to yield annual values. For abundance,
 
 ### Winter severity calculations
 
-\
+We defined winter severity as the percent of historical average snowpack—measured as snow-water equivalent (SWE) in inches—remaining on 1 April of a given year (e.g., 100% of historical average snow pack indicates an average-severity winter). We calculated the severity of each winter between 2011 and 2018 at 10 snow observation stations surrounding our study area, then used ArcGIS Pro (citation) to interpolate those values across the landscape and calculate the average pixel value in our study area (figure). Snow observation stations were between 5.1 and 19.5 km from the Mossy Pond study area, and the diversity of local conditions captured by these 10 stations insulated our measurement from site-specific factors that may have produced a non-representative measurement in any given year. All snow pack data was provided by the California Department of Water Resources, accessed via the California Data Exchange Center (CDEC--[http://cdec.water.ca.gov](http://cdec.water.ca.gov/)). 
+
+Each of 10 snow monitoring stations surrounding the MPSA is used as a point estimate of winter severity, and those points are used to interpolate winter severity values across the landscape, providing a robust estimate of winter severity in the MPSA.\
 
 ## Results
+
+**Bd status**
+
+xx / xx samples tested positive for Bd, with low to moderate loads well below the lethal level described by Vredenburg et al. (2010). Infection levels in this zone are typical of other enzootic and recovered mountain yellow-legged frog populations (figure xx).
+
+**Abundance**
+
+We calculated the abundance of the Mossy Pond *R. sierrae* population for each of the 16 primary survey periods of the study. The lowest abundance in the population was observed in the final period, September 2018 (117 individuals, 95% Bayesian credible interval: 103-132) and a maximum of 245 individuals (95% credible interval 237-256) was observed during the fifth primary period, in July 2015. Across all primary periods, the mean abundance of the population was 168 individuals. The population grew from 2014 to 2016 and declined in 2017 and 2018. Within years, abundance typically peaked during the second of three yearly primary periods, which was most often in July.
+
+**Recruitment**
+
+A total of 629 frogs recruited into the adult population over the course of the study. Annual recruitment ranged from 60 individuals (95% credible interval: 45-78) in 2018 to 166 individuals (95% credible interval: 143-188) in 2015.
+
+**Survival**
+
+The probability of surviving between primary periods, averaged over all frogs, was relatively high (average \_\_\_) and constant (\_\_\_), excluding one outlier period over the 2015-2016 winter (prob = 0.57).
+
+**Detection**
+
+For each session (secondary period; n=47) of the study, we calculated the probability that an individual frog that is alive and available for detection is actually detected. Detection probability was lowest (median 0.26, CrI 0.2-0.31) during the sixteenth session (09 September, 2015) and highest (median 60.9, CrI: 0.54-0.67) during the forty-third session (07 August, 2018). The average detection probability over 47 individual surveys was 0.454.
+
+**Winter severity, Recruitment, and Abundance**
+
+Our study period coincided with high variation in winter severity at the Mossy Pond study area, with snowpack SWE ranging from 3.5% of historical average in 2015 to 150% in 2017. This natural variability provided an opportunity to explore how winter conditions influence population dynamics. Our analyses reveal a strong negative correlation between winter severity (lagged by one year) and the number of frogs recruited into the adult population (median correlation coefficient: -0.92; credible interval: –0.70 to -0.98). For example, the most severe winter in our study (2016–2017) corresponded to the lowest annual recruitment in 2018.
+
+## Discussion
+
+**Context: The *Rana sierrae / muscosa* story in 3 papers:**
+
+1\. [Vredenburg et al. 2010](https://www.pnas.org/doi/10.1073/pnas.0914111107) – *Bd*-induced decline of *R. sierrae*
+
+Careful monitoring of *R. sierrae* populations through *Bd* epizootic events from 2004-2008 reveals large-scale declines and extirpations. 69 of 88 observed populations were wiped out by 2008 and the rest are expected to follow. Disease is the overwhelming driver of population dynamics in this system.
+
+2.  [Knapp at al. 2016](https://www.pnas.org/doi/full/10.1073/pnas.1600983113) – Persistence and natural recovery
+
+After decades of decline, *R. sierrae* in Yosemite National Park are increasing in abundance. The trend is observed at the landscape scale, across hundreds of populations, providing a rare example of amphibian resilience. A laboratory experiment reveals that resistance to *Bd* (reduced infection susceptibility) may be the mechanism enabling persistence and recovery.
+
+3.  [Knapp et al 2024](https://www.nature.com/articles/s41467-024-53608-4) – Translocations & reintroductions: harnessing natural *Bd-*resistance for human-assisted recovery
+
+Individuals from *Bd*-persistent populations exhibit resistance to infection, consistent with expectations under an “evolutionary rescue” scenario. A 15-year study shows that reintroducing resistant individuals from naturally recovering populations to unoccupied habitat is an effective method for *R. sierrae* recovery.  A majority of new populations exhibit successful reproduction and recruitment (becoming self-sustaining) and models show low 50-year extinction probabilities.
+
+**How does my work fit into this story?**
+
+1.  ***Bd*****-persistent populations: what’s going on?**
+
+-   To better understand the *R. sierrae* story (and the greater global story of amphibian-Bd dynamics) we need detailed information about how populations are persisting and recovering in the presence of *Bd*.
+
+-   Detailed demographic data from large persistent populations are rare in the literature. We need fine-scale information about population structure and dynamics not included in the landscape-level studies outlined above.
+
+-   This 5-year capture-mark-recapture study of the Mossy Pond *R. sierrae* population (Tahoe National Forest, CA) provides an excellent case study of a large persistent population in the northern extent of the species’ range.
+
+-   Relatively little is known about northern populations compared to their southern counterparts, adding another layer of usefulness to this study (expanded geographic representation).
+
+-   How do my results help to fill this information gap?
+
+2.  **Demonstrating a return to ‘normal’ ecological regulation**
+
+-   The most compelling finding of this study is the strong negative correlation between the number of individuals recruited into the adult population annually and winter severity (with a 1-year lag). The relationship holds for abundance and winter severity as well.
+
+-   This shows a shift from the disease-driven dynamics described by Vredenburg et al. 2010 to climate-driven dynamics, which is typical of ‘normal’ amphibian populations where *Bd* is not a factor.
+
+-   A paragraph on observed historical trends & future projections of winter severity in the Sierra Nevada. What might the future hold for these frogs under changing climatic conditions?
+
+-   Conservation applications
+
+-   Knapp et al. 2024 show that large persistent populations are key to the cutting edge of frog conservation. They provide *bd-*resistant individuals for reintroductions, which can establish self-sustaining populations that exhibit the founders’ *Bd* resistance.
+
+-   Utilizing persistent populations as conservation resources requires decision making informed by detailed population studies.
+
+    -   When is the best time to remove individuals?
+
+    -   How many individuals can we remove?
+
+-   Specifically, the Mossy Pond population is a prime candidate for donation to the nearby 5-Lakes Basin, where CDFW recently finished a multi-year habitat restoration project. These results will help inform that project.
 
 ## References
 
