@@ -1,21 +1,21 @@
 ---
+title: Dynamics of an Endangered Frog Population Recovering from Bd-Driven Decline
 format:
   pdf:
     documentclass: article
     linestretch: 2
     number-sections: False
     geometry: margin=1in
-    include-in-header: |
-      \usepackage{lineno}
-      \AtBeginDocument{\linenumbers}
+    include-in-header:
+      text: |
+        \usepackage{lineno}
+        \linenumbers
 bibliography: 
   - references.bib
   - manual.bib
 execute:
   echo: false
 ---
-
-# Dynamics of an Endangered Frog Population Recovering from Bd-Driven Decline
 
 ## Abstract
 
@@ -49,9 +49,7 @@ To assess the Mossy Pond *R. sierrae* population's Bd status, we collected epith
 
 We studied *R. sierrae* with capture-mark-recapture (CMR) methods, which are widely used for estimating wildlife population parameters such as abundance, survival, and recruitment [@williams2001]. We conducted CMR sampling according to Pollock's robust design [@pollock1982], which involves sampling at two temporal scales: primary periods (between which the population is open to demographic change) and secondary periods, during which the population is assumed closed. Each summer from 2014 to 2018, we visited the study site 3 or 4 times (primary periods) for three consecutive days of surveys (secondary periods), for a total of 47 individual surveys.
 
-Surveys occurred between 0800 and 1800, when *R. sierrae* are most active. We systematically searched all water bodies in the study area, capturing frogs by hand or dip net for immediate processing. We first scanned each captured frog with a BioMark 601 passive integrated transponder (PIT) tag reader (BioMark, Boise, Idaho, USA) to detect if the frog was marked (i.e., a recapture). We then used calipers to measure the snout to urostyle (SUL) length of each captured frog, and released frogs \<40 mm SUL (which are considered subadults) without further processing. Frogs larger than 40mm (adults) required further processing. New adult captures were PIT-tagged dorsally following @mcallister2004. Next, we recorded the frog's sex and weighed it inside a tared plastic bag to the nearest 0.1 g using a Pesola spring scale. Finally, we collected a GPS point (estimated precision error \~3 m) for each capture using a handheld GPS unit. We only collected length and weight data during the first capture event within a three-day primary period. Afterward, if crews captured the same individual on a subsequent day during the same primary period, crews only recorded PIT tag, sex, and location data.
-
-Over the 5-year period of our study, we recorded 3,631 captures of 657 individual frogs.
+Surveys occurred between 0800 and 1800, when *R. sierrae* are most active. We systematically searched all water bodies in the study area, capturing frogs by hand or dip net for immediate processing. We first scanned each captured frog with a BioMark 601 passive integrated transponder (PIT) tag reader (BioMark, Boise, Idaho, USA) to detect if the frog was marked (i.e., a recapture). We then used calipers to measure the snout to urostyle (SUL) length of each captured frog, and released frogs \<40 mm SUL (which are considered subadults) without further processing. Frogs larger than 40mm (adults) required further processing. New adult captures were PIT-tagged dorsally following @mcallister2004. Next, we recorded the frog's sex and weighed it inside a tared plastic bag to the nearest 0.1 g using a Pesola spring scale. Finally, we collected a GPS point (estimated precision error \~3 m) for each capture using a handheld GPS unit. We only collected length and weight data during the first capture event within a three-day primary period. Afterward, if crews captured the same individual on a subsequent day during the same primary period, crews only recorded PIT tag, sex, and location data. Over the 5-year period of our study, we recorded 3,631 captures of 657 individual frogs.
 
 ### Statistical Analysis
 
@@ -111,7 +109,7 @@ Our study period coincided with high variation in winter severity at the Mossy P
 
 #### **Bd infection dynamics and evidence for resistance**
 
-The Mossy Pond frogs carried Bd at moderate prevalence (67%) but at infection intensities that were two to three orders of magnitude lower than levels associated with increased mortality in MYL frogs. Such low loads mirror those reported for other naturally recovering populations in Yosemite National Park and stand in stark contrast to the uniformly high loads (\>600,000 ITS1 copies) and near-certain mortality that typify collapsing populations [@vredenburg2010]. Coupled with the population’s stable abundance over the study period, these patterns are consistent with the idea that some degree of Bd resistance as arisen in this population. While such dynamics could reflect an evolutionary rescue process in which genotypes conferring lower susceptibility have increased in frequency, additional genetic and experimental evidence would be required to confirm that mechanism. This expands the geographic scope of Bd-resistant R. sierrae beyond the southern Sierra Nevada, indicating that resistance is not confined to a single environmental setting or genetic lineage.
+The Mossy Pond frogs carried Bd at moderate prevalence (67%) but at infection intensities that were two to three orders of magnitude lower than levels associated with increased mortality in MYL frogs. Such low loads mirror those reported for other naturally recovering populations in Yosemite National Park and stand in stark contrast to the uniformly high loads (\>600,000 ITS1 copies) and near-certain mortality that typify collapsing populations [@vredenburg2010]. Coupled with the population’s stable abundance over the study period, these patterns are consistent with the idea that some degree of Bd resistance has arisen in this population. While such dynamics could reflect an evolutionary rescue process in which genotypes conferring lower susceptibility have increased in frequency, additional genetic and experimental evidence would be required to confirm that mechanism. This expands the geographic scope of Bd-resistant R. sierrae beyond the southern Sierra Nevada, indicating that resistance is not confined to a single environmental setting or genetic lineage.
 
 #### **Winter severity as a driver of recruitment and abundance**
 
