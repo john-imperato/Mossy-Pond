@@ -3,7 +3,7 @@ format:
   pdf:
     documentclass: article
     linestretch: 2
-    number-sections: true
+    number-sections: False
     geometry: margin=1in
     include-in-header: |
       \usepackage{lineno}
