@@ -120,6 +120,8 @@ print(time_summaries_df)
 
 View(time_summaries_df)
 
+write_csv(time_summaries_df, "/Users/johnimperato/Downloads/MF_survival.csv")
+
 ```
 
 ```{r}
@@ -139,9 +141,8 @@ difference_plot <- ggplot(time_summaries_df, aes(x = primary_period, y = mean)) 
   geom_errorbar(aes(ymin = lower95, ymax = upper95), width = 0.2, color = "blue") +
   geom_hline(yintercept = 0, linetype = "dashed", color = "red") +
   labs(
-    title = "Difference in Survival Probabilities (M - F) Between Primary Periods\nsurvival_fill_value = 'M'",
     x = "Primary Period",
-    y = "Difference in Survival Probability"
+    y = "Difference in Survival Probability (M-F)"
   ) +
   theme(
     axis.text.x = element_text(angle = 45, hjust = 1),  # Tilt x-axis labels for readability
@@ -154,6 +155,52 @@ difference_plot <- ggplot(time_summaries_df, aes(x = primary_period, y = mean)) 
 print(difference_plot)
 
 # Save the plot to a file
-ggsave("/Users/johnimperato/Desktop/Mossy-Pond_companion/difference_in_survival_probabilities_M_fill.png", 
+ggsave("/Users/johnimperato/Desktop/Mossy-Pond_companion/difference_in_survival_probabilities_ratio_fill.png", 
        plot = difference_plot, width = 10, height = 6, dpi = 300, bg = "white")
+```
+
+
+```{r}
+
+library(ggplot2)
+library(dplyr)
+
+# 1. Prepare transition labels
+time_summaries_df <- time_summaries_df %>%
+  arrange(time_index) %>%
+  mutate(
+    transition = factor(
+      paste0(time_index, "-", time_index + 1),
+      levels = paste0(time_index, "-", time_index + 1)
+    )
+  )
+
+# 2. Compute y-axis lower bound so that zero sits above the bottom 
+y_lower <- min(time_summaries_df$lower95, 0) - 0.1
+y_upper <- max(time_summaries_df$upper95) + 0.01
+
+# 3. Plot
+difference_plot <- ggplot(time_summaries_df, aes(x = transition, y = mean)) +
+  geom_point(size = 2, color = "black") +
+  geom_errorbar(aes(ymin = lower95, ymax = upper95),
+                width = 0.2, color = "black") +
+  geom_hline(yintercept = 0, linetype = "dashed", color = "#B2182B") +
+  scale_y_continuous(
+    limits = c(y_lower, y_upper),
+    expand = c(0, 0)
+  ) +
+  labs(
+    x = "Primary Period Transitions",
+    y = "Difference in Survival Probability (M–F)"
+  ) +
+  theme_minimal(base_size = 12) +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1),
+    axis.title    = element_text(face = "bold"),
+    panel.grid.minor = element_blank()
+  )
+
+# 4. Display
+print(difference_plot)
+
 ```

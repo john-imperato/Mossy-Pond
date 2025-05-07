@@ -25,7 +25,6 @@ library(ggpubr)
 avg_swe <- read.csv('/Users/johnimperato/Desktop/Mossy-Pond/data/Yearly_Winter_Severity_2011_2018_MPSA.csv')
 
 avg_swe <- avg_swe %>%
-  rename(Winter_Severity = Average.Pixel.Value) %>%
   mutate(Winter = c("2010-2011", "2011-2012", "2012-2013", "2013-2014", "2014-2015", "2015-2016", "2016-2017", "2017-2018"))
 
 # create data frame for winter severity one year prior
@@ -58,16 +57,18 @@ avg_swe_3yrAvg_1yrLag <- avg_swe %>%
 
 ```
 
-## Population Vital Rates/Numbers and Growth Rate
+## Population Vital Rates/Numbers
 
 **N, B, and phi**
 
 ```{r}
 
-model_summary <- read.csv('/Users/johnimperato/Desktop/Mossy-Pond_companion/mp_custom_mod_sumary.csv')
+model_summary <- read.csv('/Users/johnimperato/Desktop/Mossy-Pond_companion/mp_custom_mod_summary.csv')
 
 # extract N values from model summary
 N <- model_summary[33659:33674, ]
+
+View(N)
 
 # calculate yearly average N
 N_yearly_avg <- N %>%
@@ -115,7 +116,8 @@ B_yearly_avg <- B %>%
   select(Year, Recruited_Individuals)  
 
 # extract overwinter survival values from model summary
-phi <- B <- model_summary[c(33738:33752), ]
+phi <- model_summary[c(33738:33752), ]
+View(phi)
 
 # extract overwinter survival
 phi_overwinter <- phi %>%
@@ -125,9 +127,6 @@ phi_overwinter <- phi %>%
   # Rename 'mean' to 'Recruited_Individuals' and reorder columns
   rename(Overwinter_Survival_Probability = mean) %>%
   select(Winter, Overwinter_Survival_Probability)  
-
-print(N)
-print(B)
 
 print(B_yearly_avg)
 print(N_yearly_avg)
@@ -289,6 +288,9 @@ correlation_plot_2_N <- ggplot(data = comparison_df_2_N, aes(x = Winter_Severity
   ) +
   theme_minimal() +
   theme(plot.title = element_text(hjust = 0.5))
+
+abundance_WinterSeverity_2yr
+correlation_plot_2_N
 
 ```
 
@@ -492,7 +494,7 @@ print(WinterSeverity_B1)
 print(correlation_plot_B1)
 
 ggsave("WinterSeverityB1.png", plot = WinterSeverity_B1, bg = "white")
-ggsave("CorrelationB1.png", plot = correlation_plot_B1, bg = "white")
+ggsave("CorrelationB1_narrow.png", plot = correlation_plot_B1, bg = "white")
 
 ```
 
@@ -583,7 +585,7 @@ correlation_plot_B3 <- ggplot(data = comparison_df_B3, aes(x = swe_3yrAvg, y = R
   labs(
     title = "Correlation between 3-yr avg Winter Severity and Recruitment",
     x = "Winter Severity (% of Historical Average 1 April SWE)",
-    y = "Yearly Mean Abundance"
+    y = "Yearly Recruitment"
   ) +
   theme_minimal() +
   theme(plot.title = element_text(hjust = 0.5))
