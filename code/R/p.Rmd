@@ -1,0 +1,59 @@
+---
+title: "p"
+output: html_document
+date: "2025-05-07"
+---
+
+```{r}
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Detection (p) summaries by survey
+# ─────────────────────────────────────────────────────────────────────────────
+
+# 0) Load packages
+# install.packages(c("dplyr","tidyr","stringr","readr"))
+library(dplyr)
+library(tidyr)
+library(stringr)
+library(readr)
+
+# 1) Load model & survey data (add survey_idx for joining)
+mod     <- readRDS("/Users/johnimperato/Desktop/Mossy-Pond_companion/Model_2.0.rds")
+surveys <- read_csv("/Users/johnimperato/Desktop/Mossy-Pond/data/survey_MossyPond.csv") %>%
+  mutate(
+    survey_date = as.Date(survey_date),
+    survey_idx  = row_number()
+  )
+
+# 2) Extract all p draws (p[1] … p[Jtot])
+p_draws_raw <- mod$m_fit$draws("p", format = "draws_df")
+
+# 3) Pivot to long form and attach survey metadata
+p_draws <- p_draws_raw %>%
+  pivot_longer(
+    cols      = starts_with("p["),
+    names_to  = "name",
+    values_to = "p_raw"
+  ) %>%
+  mutate(
+    survey_idx = as.integer(str_extract(name, "(?<=\\[)\\d+(?=\\])"))
+  ) %>%
+  left_join(surveys, by = "survey_idx")
+
+# 4) Summarize detection probability by survey
+Detection_summary <- p_draws %>%
+  group_by(survey_idx, primary_period, survey_date) %>%
+  summarize(
+    median    = median(p_raw),
+    lo025     = quantile(p_raw, 0.025),
+    hi975     = quantile(p_raw, 0.975),
+    ci_width  = hi975 - lo025,
+    .groups   = "drop"
+  ) %>%
+  arrange(survey_date)
+
+# 5) Print or export results
+print(Detection_summary)
+# write_csv(Detection_summary, "Detection_summary.csv")
+
+```

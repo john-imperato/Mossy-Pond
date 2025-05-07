@@ -1,0 +1,66 @@
+---
+title: 'N'
+output: html_document
+date: "2025-05-07"
+---
+
+```{r}
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Abundance (N) summaries by primary period
+# ─────────────────────────────────────────────────────────────────────────────
+
+# 0) Load packages
+# install.packages(c("dplyr","tidyr","stringr","readr"))
+library(dplyr)
+library(tidyr)
+library(stringr)
+library(readr)
+
+# 1) Load model & surveys
+mod     <- readRDS("/Users/johnimperato/Desktop/Mossy-Pond_companion/Model_2.0.rds")
+surveys <- read_csv("/Users/johnimperato/Desktop/Mossy-Pond/data/survey_MossyPond.csv") %>%
+             mutate(survey_date = as.Date(survey_date))
+
+# 2) Build table of primary period dates
+period_dates <- surveys %>%
+  group_by(primary_period) %>%
+  summarize(
+    start_date = min(survey_date),
+    end_date   = max(survey_date),
+    .groups    = "drop"
+  )
+
+# 3) Extract all N draws (N[1] = period 2, N[2] = period 3, …)
+n_draws_raw <- mod$m_fit$draws("N", format = "draws_df")
+
+# 4) Pivot long & attach dates
+n_draws <- n_draws_raw %>%
+  pivot_longer(
+    cols      = starts_with("N["),
+    names_to  = "name",
+    values_to = "N_raw"
+  ) %>%
+  mutate(
+    t             = as.integer(str_extract(name, "(?<=\\[)\\d+(?=\\])")),
+    primary_period = t
+  ) %>%
+  left_join(period_dates, by = "primary_period")
+
+# 5) Summarize
+Abundance_summary <- n_draws %>%
+  group_by(primary_period, start_date, end_date) %>%
+  summarize(
+    median   = median(N_raw),
+    lo025  = quantile(N_raw, 0.025),
+    hi975  = quantile(N_raw, 0.975),
+    ci_width = hi975 - lo025,
+    .groups  = "drop"
+  ) %>%
+  arrange(primary_period)
+
+# 6) Output
+print(Abundance_summary)
+# write_csv(Abundance_summary, "Abundance_summary.csv")
+
+```

@@ -1,0 +1,106 @@
+---
+title: "B"
+output: html_document
+date: "2025-05-07"
+---
+
+```{r}
+# ─────────────────────────────────────────────────────────────────────────────
+# Recruitment (B) summaries by primary period & annual totals
+# ─────────────────────────────────────────────────────────────────────────────
+
+# 0) Load packages
+# install.packages(c("dplyr","tidyr","stringr","readr"))
+library(dplyr)
+library(tidyr)
+library(stringr)
+library(readr)
+
+# 1) Load model & survey data
+mod     <- readRDS("/Users/johnimperato/Desktop/Mossy-Pond_companion/Model_2.0.rds")
+surveys <- read_csv("/Users/johnimperato/Desktop/Mossy-Pond/data/survey_MossyPond.csv") %>%
+             mutate(survey_date = as.Date(survey_date))
+
+# 2) Build table of primary period dates
+period_dates <- surveys %>%
+  group_by(primary_period) %>%
+  summarize(
+    start_date = min(survey_date),
+    end_date   = max(survey_date),
+    .groups    = "drop"
+  )
+
+# 3) Extract all B draws (B[1] = recruitment 1→2, etc.)
+b_draws_raw <- mod$m_fit$draws("B", format = "draws_df")
+
+# 4) Pivot long & attach dates
+b_draws <- b_draws_raw %>%
+  pivot_longer(
+    cols      = starts_with("B["),
+    names_to  = "name",
+    values_to = "B_raw"
+  ) %>%
+  mutate(
+    # interval index → primary_period
+    t              = as.integer(str_extract(name, "(?<=\\[)\\d+(?=\\])")),
+    primary_period = t
+  ) %>%
+  left_join(period_dates, by = "primary_period")
+
+# 5) Map primary_period → calendar Year
+Year_map <- tibble(
+  primary_period = 1:16,
+  Year = c(
+    rep(2014, 3),  # periods 1,2,3 → 2014
+    rep(2015, 3),  # 4,5,6 → 2015
+    rep(2016, 3),  # 7,8,9 → 2016
+    rep(2017, 3),  # 10,11,12 → 2017
+    rep(2018, 4)   # 13,14,15,16 → 2018
+  )
+)
+
+b_draws <- b_draws %>%
+  left_join(Year_map, by = "primary_period")
+
+
+# 6) Interval‐specific summary (as before)
+Recruitment_summary <- b_draws %>%
+  group_by(primary_period, start_date, end_date) %>%
+  summarize(
+    median     = median(B_raw),
+    lo025    = quantile(B_raw, 0.025),
+    hi975    = quantile(B_raw, 0.975),
+    cri_width = hi975 - lo025,
+    .groups  = "drop"
+  ) %>%
+  arrange(primary_period)
+
+# 7) Annual recruitment: sum within each posterior draw, then summarize
+#    We group on the internal .draw index so covariance is preserved.
+annual_B_draws <- b_draws %>%
+  group_by(.draw, Year) %>%
+  summarise(
+    B_year = sum(B_raw),
+    .groups = "drop"
+  )
+
+Yearly_Recruitment_summary <- annual_B_draws %>%
+  group_by(Year) %>%
+  summarise(
+    median     = median(B_year),
+    lo025    = quantile(B_year, 0.025),
+    hi975    = quantile(B_year, 0.975),
+    cri_width = hi975 - lo025,
+    .groups  = "drop"
+  ) %>%
+  arrange(Year)
+
+# 8) Print or export
+print(Recruitment_summary)
+print(Yearly_Recruitment_summary)
+
+# Optionally save to CSV:
+# write_csv(Recruitment_summary,        "Recruitment_summary.csv")
+# write_csv(Yearly_Recruitment_summary, "Yearly_Recruitment_summary.csv")
+
+```

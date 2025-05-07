@@ -1,0 +1,114 @@
+---
+title: "Phi"
+output: html_document
+date: "2025-05-07"
+---
+
+```{r}
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Interval & Seasonal Monthly Survival with Dates, CI width & Season
+# ─────────────────────────────────────────────────────────────────────────────
+
+# 0) install / load required packages
+# install.packages(c("dplyr","tidyr","stringr","readr"))
+library(dplyr)
+library(tidyr)
+library(stringr)
+library(readr)
+
+# 1) Load your model and survey data
+mod <- readRDS("/Users/johnimperato/Desktop/Mossy-Pond_companion/Model_2.0.rds")
+
+surveys <- read_csv("/Users/johnimperato/Desktop/Mossy-Pond/data/survey_MossyPond.csv") %>%
+  mutate(survey_date = as.Date(survey_date))
+
+# 2) Compute first & last survey date for each primary period
+period_dates <- surveys %>%
+  group_by(primary_period) %>%
+  summarise(
+    start_date = min(survey_date),
+    end_date   = max(survey_date),
+    .groups    = "drop"
+  )
+
+# 3) Build the intervals table: transition index, from→to, start/end dates, length
+intervals <- period_dates %>%
+  mutate(
+    from       = primary_period,
+    to         = lead(primary_period),
+    next_start = lead(start_date)
+  ) %>%
+  filter(!is.na(to)) %>%
+  mutate(
+    delta_days   = as.numeric(difftime(next_start, end_date, units = "days")),
+    delta_months = delta_days / 30.44,
+    transition   = from
+  ) %>%
+  select(
+    transition,
+    from, 
+    to,
+    start_date,
+    end_date,
+    delta_days,
+    delta_months
+  )
+
+# 4) Extract all raw posterior draws of overall_phi
+phi_draws_raw <- mod$m_fit$draws("overall_phi", format = "draws_df")
+
+# 5) Pivot to long form, parse the Stan index, join intervals, and standardize to monthly
+phi_draws <- phi_draws_raw %>%
+  pivot_longer(
+    cols      = starts_with("overall_phi"),
+    names_to  = "name",
+    values_to = "phi_raw"
+  ) %>%
+  mutate(
+    transition = as.integer(str_extract(name, "(?<=\\[)\\d+(?=\\])"))
+  ) %>%
+  left_join(intervals, by = "transition") %>%
+  mutate(
+    phi_monthly = phi_raw^(1 / delta_months)
+  )
+
+# 6) Interval‐specific summary: collapse down, then add CI width & season
+interval_summary <- phi_draws %>%
+  group_by(transition, from, to, start_date, end_date, delta_days, delta_months) %>%
+  summarise(
+    median   = median(phi_monthly),
+    lo025  = quantile(phi_monthly, 0.025),
+    hi975  = quantile(phi_monthly, 0.975),
+    .groups = "drop"
+  ) %>%
+  # now that you have one row per transition, compute:
+  mutate(
+    cri_width = hi975 - lo025,
+    season   = if_else(delta_months > 2, "winter", "summer")
+  ) %>%
+  arrange(transition)
+
+# 7) Seasonal summaries (winter >2 mo vs. summer ≤2 mo)
+season_summary <- phi_draws %>%
+  mutate(
+    season = if_else(delta_months > 2, "winter", "summer")
+  ) %>%
+  group_by(season) %>%
+  summarise(
+    median     = median(phi_monthly),
+    lo025    = quantile(phi_monthly, 0.025),
+    hi975    = quantile(phi_monthly, 0.975),
+    ci_width = hi975 - lo025,
+    .groups  = "drop"
+  )
+
+# 8) Print or export results
+print(interval_summary)
+print(season_summary)
+
+# Optionally write tables for your paper:
+# write_csv(interval_summary, "interval_survival_summary.csv")
+# write_csv(season_summary,   "season_survival_summary.csv")
+
+```
