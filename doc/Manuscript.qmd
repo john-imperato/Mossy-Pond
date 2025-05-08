@@ -15,120 +15,213 @@ bibliography:
   - manual.bib
 execute:
   echo: false
+bibliography: references.bib
 ---
 
 ## Abstract
 
-Mountain yellow-legged frogs (*Rana sierrae* and *Rana muscosa*) have disappeared from \>90% of their historic range due to the virulent fungal pathogen *Batrachochytrium dendrobatidis* (Bd), yet a handful of populations now persist and recover in the pathogen's presence. We studied one such recovering population at Mossy Pond, Tahoe National Forest, for five summers (2014–2018) using robust-design capture–mark–recapture methods and analyzed the capture histories with a Bayesian Jolly–Seber model. From 3,631 captures of 657 uniquely marked adults, estimated abundance varied from 117 to 245 individuals, and a total of 629 new adults recruited over the study. Monthly survival was higher in winter than in summer (mean and credible interval; winter: 0.97 (xx-xx), summer: 0.8 (xx-xx) and male survival exceeded female survival by 2–7% in each interval. Survey-specific detection probability averaged 0.45. Bd was present in 67% of skin-swab samples and infection loads were two–three orders of magnitude below lethal thresholds. Recruitment and abundance declined sharply after severe winters, yet overwinter adult survival showed no snow effect. These findings suggest this population is persisting despite ongoing Bd infection, perhaps as a result of some degree of infection resistance. ................. identify this robust northern Sierra Nevada population as a prime donor for reintroduction-based recovery efforts.
+Mountain yellow-legged frogs (*Rana sierrae* and *Rana muscosa*) have disappeared from \>90% of their historic range due to the virulent fungal pathogen *Batrachochytrium dendrobatidis* (Bd).
+Despite the severe impacts of Bd on naive populations, a small fraction of affected populations now persist and recover in the pathogen's presence.
+We studied one such recovering *R. sierrae* population at Mossy Pond, Tahoe National Forest, for five summers (2014–2018) using robust-design capture–mark–recapture methods and analyzed capture histories with a Bayesian Jolly–Seber model.
+From 3,631 captures of 657 uniquely marked adults, estimated abundance varied from 117 to 245 individuals, and a total of 629 new adults recruited over the study.
+Monthly survival was higher in winter than in summer (posterior median and credible interval; winter: 0.97 (0.94-0.98), summer: 0.82 (0.63-0.92) and male survival exceeded female survival by 2–7% in each interval.
+Survey-specific detection probability averaged 0.45.
+Bd was present in 67% of skin swab samples and infection loads were two–three orders of magnitude below lethal thresholds.
+Recruitment and abundance declined sharply after severe winters, yet overwinter adult survival showed no snow effect.
+These findings suggest this population is persisting despite ongoing Bd infection, perhaps as a result of some degree of infection resistance.
+Our results indicate this *R. sierrae* population may serve as a potential donor for reintroduction-based recovery efforts in the northern Sierra Nevada.
 
 ## Introduction
 
-Amphibians continue to experience global declines, with infectious diseases recognized as primary drivers of biodiversity loss [@luedtke2023a]. Chytridiomycosis, caused by the fungal pathogen *Batrachochytrium dendrobatidis* (Bd), has driven declines or extinctions of approximately 200 amphibian species globally [@skerratt2007]. Amphibian responses to Bd infection vary dramatically; some populations show minimal impact, others rapidly go extinct, and a rare few exhibit persistence or even recovery following severe declines [@lips2016]. The mechanisms supporting persistence or recovery remain poorly understood but likely involve interactions among ecological, evolutionary, immunological, and demographic factors [@scheele2017].
+Amphibians are declining worldwide, with infectious diseases recognized as primary drivers of biodiversity loss [@luedtke2023a].
+Chytridiomycosis, caused by the virulent fungal pathogen *Batrachochytrium dendrobatidis* (Bd), has contributed to the decline of at least 501 amphibian species over the past half-century, including 90 presumed extinctions, representing the greatest documented loss of biodiversity attributable to a disease [@scheele2019].
 
-The mountain yellow-legged (MYL) frog species complex (*Rana sierrae* and *Rana muscosa*), endemic to California's Sierra Nevada and Transverse ranges, provides a particularly well-documented case of amphibian decline and recovery from Bd infection. Starting in the 1970s, Bd spread through the Sierra Nevada, causing widespread and rapid extirpations of MYL frog populations [@vredenburg2010; @vredenburg2019]. By the early 2000s, over 90% of historical populations had been lost, due to combined impacts from Bd and introduced predatory trout [@knapp2000]. Despite these losses, a few populations survived initial Bd outbreaks, eventually exhibiting increased abundance and apparent disease resistance [@knapp2016]. These dynamics are consistent with patterns of evolutionary rescue [@carlson2014], in which populations rapidly acquire adaptive genetic variation that restores demographic viability under persistent threats [e.g. @knapp2024].
+Among amphibian populations susceptible to Bd, disease dynamics often unfold in two phases: an initial epizootic phase marked by rapid population decline and widespread mortality, followed, in some cases, by an enzootic phase where the pathogen persists at lower host densities and reduced infection intensities [@briggs2010].
+These trajectories can end in extinction, long-term persistence at reduced densities, or, in rare cases, substantial population recovery after severe initial declines [@lips2016].
+The ecological, evolutionary, immunological, and demographic processes underlying persistence and recovery remain poorly understood, yet identifying these mechanisms is crucial for amphibian conservation and management [@scheele2017].
 
-Although broad-scale studies have described these declines and recoveries, detailed demographic analyses at the individual population level remain scarce, primarily due to logistical challenges. Most fine-scale demographic research has focused on southern populations, particularly within Yosemite National Park [@fellers2013; @joseph2018; @knapp2024] . In contrast, the population dynamics of *R. sierrae* in the northern Sierra Nevada—where habitats are more heterogeneous and populations are smaller and lower in elevation—remain understudied (MYLF ITT 2018) [@brown2019].
+The mountain yellow-legged (MYL) frog species complex (*Rana sierrae* and *Rana muscosa*), endemic to California's Sierra Nevada and Transverse ranges, provides a particularly well-documented case of amphibian decline, persistence, and eventual recovery from Bd infection.
+Starting in the 1970s, Bd spread through the Sierra Nevada, causing widespread and rapid extirpations of MYL frog populations [@vredenburg2010; @vredenburg2019].
+By the early 2000s, over 90% of historical populations had been lost, due to combined impacts from Bd and introduced predatory trout [@knapp2000].
+Despite these losses, a few populations survived initial Bd outbreaks, eventually exhibiting increased abundance and apparent disease resistance [@knapp2016].
+These dynamics are consistent with patterns of evolutionary rescue [@carlson2014], in which populations rapidly acquire adaptive genetic variation that restores demographic viability under persistent threats [e.g. @knapp2024].
 
-To address this gap, we conducted a five-year capture-mark-recapture (CMR) study of a naturally recovering, Bd-positive *R. sierrae* population in Tahoe National Forest. Our objectives were to estimate key demographic parameters—abundance, survival, recruitment, and detection probability—to provide insights into the ecological processes and factors that contribute to population viability under endemic Bd infection. We also examined the role of climate variability in shaping these demographic parameters, as climate change is increasingly recognized as a primary driver of amphibian declines worldwide, comparable in impact to disease and habitat loss [@luedtke2023a]. Understanding how climate influences abundance, survival, and recruitment is particularly important for high-elevation amphibian populations living with endemic Bd infection.
+Although broad-scale studies have described these declines and recoveries, detailed demographic analyses at the individual population level remain scarce, primarily due to logistical challenges.
+Most fine-scale demographic research has focused on southern populations, particularly within Yosemite National Park [@fellers2013; @joseph2018; @knapp2024] .
+In contrast, the population dynamics of *R. sierrae* in the northern Sierra Nevada—where habitats are more heterogeneous and populations are smaller and lower in elevation—remain understudied [MYLF ITT 2018; @brown2019].
 
-Understanding demographic patterns in recovering MYL frog populations has significant conservation implications. Recent research demonstrates these populations can serve as effective founders in reintroduction programs, establishing self-sustaining populations when translocated to suitable but currently unoccupied habitats [@knapp2024]. Leveraging evolved disease resistance from naturally recovering populations offers a promising conservation strategy. Our study provides critical demographic data to support these conservation efforts, particularly for the less-studied northern Sierra Nevada populations.
+To address this gap, we conducted a five-year capture-mark-recapture (CMR) study of a naturally recovering, Bd-positive *R. sierrae* population in Tahoe National Forest.
+Our objectives were to estimate key demographic parameters—abundance, survival, recruitment, and detection probability—to provide insights into the ecological processes and factors that contribute to population viability under enzootic Bd infection.
+We also examined the role of climate variability in shaping these demographic parameters, as climate change is increasingly recognized as a primary driver of amphibian declines worldwide, comparable in impact to disease and habitat loss [@luedtke2023a].
+Understanding how climate influences abundance, survival, and recruitment is particularly important for high-elevation amphibian populations living with enzootic Bd infection.
+
+Understanding demographic patterns in recovering MYL frog populations has significant conservation implications.
+Recent research demonstrates these populations can serve as effective founders in reintroduction programs, establishing self-sustaining populations when translocated to suitable but currently unoccupied habitats [@knapp2024].
+Leveraging evolved disease resistance from naturally recovering populations offers a promising conservation strategy.
+Our study provides critical demographic data to support these conservation efforts, particularly for the less-studied northern Sierra Nevada populations.
 
 ## Methods
 
 ### Study area and species
 
-The Mossy Pond study area is a 2.6 square km section of the Tahoe National Forest, north of Highway 80 in Nevada County, California. It is characterized by lakes, ponds, and streams set on granite benches, ranging from 1,950 m to 2,164 m in elevation. The study area includes the namesake Mossy Pond (6 hectare surface area, maximum depth 2.5 meters), its seasonally flowing outlet stream, and 12 ephemeral ponds. The absence of deep-water habitat is unusual for areas supporting MYL frog populations, given their general reliance on water bodies deeper than 3-4 meters for overwinter survival [@bradford1983; @knapp2003].
+The Mossy Pond study area is a 2.6 square kilometer section of the Tahoe National Forest, north of Highway 80 in Nevada County, California.
+It is characterized by lakes, ponds, and streams set on granite benches, ranging from 1,950 m to 2,164 m in elevation.
+The study area includes the namesake Mossy Pond (6 hectare surface area, maximum depth 2.5 meters), its seasonally flowing outlet stream, and 12 ephemeral ponds.
+The absence of deep-water habitat is unusual for areas supporting MYL frog populations, given their general reliance on water bodies deeper than 3-4 meters for overwinter survival [@bradford1983; @knapp2003].
 
-*R. sierrae* is a federally endangered, mid-sized ranid frog that occupies montane waterbodies in California's Sierra Nevada [@u.s.fishandwildlifeservice2014]. *R. sierrae* was first detected in the Mossy Pond area in 1998 **(citation)**, and the California Department of Fish and Wildlife (CDFW) has been monitoring the population since 2001.
+*R. sierrae* is a federally endangered, mid-sized ranid frog that occupies montane waterbodies in California's Sierra Nevada [@u.s.fishandwildlifeservice2014].
+*R. sierrae* was first detected in the Mossy Pond area in 1998, and the California Department of Fish and Wildlife (CDFW) has been monitoring the population since 2001 (CDFW, unpublished data).
 
 ### Bd status
 
-To assess the Mossy Pond *R. sierrae* population's Bd status, we collected skin swabs from 24 adult frogs over three years (2008, 2010, and 2021). The amount of Bd DNA on each swab was quantified using real-time quantitative polymerase chain reaction (qPCR) analysis [@boyle2007]. We report infection loads as the number of ITS1 (Internal Transcribed Spacer 1) gene copies detected [@longo2013; @joseph2018]. To compare the Bd loads of Mossy Pond frogs to those of other known recovering *R. sierrae* populations, we compared Bd loads from Mossy Pond to those from three known naturally recovering populations in Yosemite National Park [@knapp2024].
+To assess the Mossy Pond *R. sierrae* population's Bd status, we collected skin swabs from 24 adult frogs over three years (2008, 2010, and 2021).
+The amount of Bd DNA on each swab was quantified using real-time quantitative polymerase chain reaction (qPCR) analysis [@boyle2007].
+We report infection loads as the number of ITS1 (Internal Transcribed Spacer 1) gene copies detected [@longo2013; @joseph2018].
+We compared Bd loads from Mossy Pond frogs to those reported from three naturally recovering *R. sierrae* populations in Yosemite National Park [@knapp2024].
 
-### Frog population surveys
+### Capture-Mark-Recapture Surveys
 
-We surveyed the Mossy Pond *R. sierrae* population using capture-mark-recapture (CMR) methods, which are widely used for estimating wildlife population parameters such as abundance, survival, and recruitment [@williams2001]. We conducted CMR sampling according to Pollock's robust design [@pollock1982], which involves sampling at two temporal scales: primary periods, between which the population is open to demographic change, and secondary periods, during which the population is assumed closed. Each summer from 2014 to 2018, we visited the study site 3 or 4 times (primary periods) for three consecutive days of surveys (secondary periods), for a total of 47 individual surveys.
+We surveyed the Mossy Pond *R. sierrae* population using capture-mark-recapture (CMR) methods, which are widely used for estimating wildlife population parameters such as abundance, survival, and recruitment [@williams2001].
+We conducted CMR sampling according to Pollock's robust design [@pollock1982], which involves sampling at two temporal scales: primary periods, between which the population is open to demographic change, and secondary periods, during which the population is assumed closed.
+Each summer from 2014 to 2018, we visited the study site 3 or 4 times (primary periods) for three consecutive days of surveys (secondary periods), for a total of 47 individual surveys.
 
-Surveys occurred between 0800 and 1800, when *R. sierrae* are most active. We systematically searched all water bodies in the study area, capturing frogs by hand or dip net for immediate processing. We first scanned each captured frog with a BioMark 601 passive integrated transponder (PIT) tag reader (BioMark, Boise, Idaho, USA) to detect if the frog was marked (i.e., a recapture). We then used calipers to measure the snout to urostyle (SUL) length of each captured frog, and released frogs \<40 mm SUL (which are considered subadults) without further processing. Frogs larger than 40mm (adults) required further processing. New adult captures were PIT-tagged dorsally following @mcallister2004. Next, we recorded the frog's sex and weighed it inside a tared plastic bag to the nearest 0.1 g using a Pesola spring scale. Finally, we collected a GPS point (estimated precision error \~3 m) for each capture using a handheld GPS unit. We only collected length and weight data during the first capture event within a three-day primary period. Afterward, if crews captured the same individual on a subsequent day during the same primary period, crews only recorded PIT tag, sex, and location data. Over the 5-year period of our study, we recorded 3,631 captures of 657 individual frogs.
+Surveys occurred between 0800 and 1800, when *R. sierrae* are most active.
+We systematically searched all water bodies in the study area, capturing adult frogs (\>40mm snout to urostyle length) by hand or dip net for immediate processing.
+We first scanned each captured frog for a passive integrated transponder (PIT) tag to detect if the frog was already marked (i.e., a recapture).
+Untagged adults were PIT-tagged dorsally following @mcallister2004.
+Next, we recorded the frog's sex and weighed it inside a plastic bag to the nearest 0.1 g using a Pesola spring scale.
+Finally, we collected a GPS point (estimated precision error \~3 m) for each capture using a handheld GPS unit.
+We only collected length and weight data during the first capture event within a three-day primary period.
+Afterward, if crews captured the same individual on a subsequent day during the same primary period, crews only recorded PIT tag, sex, and location data.
 
-### Statistical Analysis
+### Capture-Mark-Recapture Modeling & Statistical Analysis
 
-We estimated survival, detection, recruitment, and adult population size for the Mossy Pond *R. sierrae* population using a site‐specific open‐population Jolly–Seber CMR model in a Bayesian framework with R statistical software [@R]. Our implementation builds on the mrmr R package [@joseph2019] (https://snarl1.github.io/mrmr/index.html), which tracks a superpopulation of M individuals through not‐recruited, alive, or dead states and models detection and demographic processes across primary and secondary periods [@knapp2024]. We assessed convergence with trace‐plots and Gelman–Rubin (R̂) diagnostics and compared model alternatives using leave‐one‐out cross‐validation.
+We estimated survival, detection, recruitment, and adult population size for the Mossy Pond *R. sierrae* population using an open‐population Jolly–Seber CMR model implemented in a Bayesian framework with R statistical software [@R].
+We analyzed the CMR data using the mrmr R package [@joseph2019] (https://snarl1.github.io/mrmr/index.html), but modified the package code to add additional functionality, as described below.
+Our implementation builds on the original package, which tracks a superpopulation of M individuals through not‐recruited, alive, or dead states and models detection and demographic processes across primary and secondary periods [@knapp2024].
 
-In our model φₜ represents the probability that an individual alive at primary period t survives through to t + 1. Because the interval length Δₜ (in months) varies, we standardized each φₜ to a per‐month rate by taking the Δₜth root of every posterior draw, producing monthly survival estimates (with 95% credible bounds) that are directly comparable across short summer and long overwinter intervals.
+*We assessed convergence with trace‐plots and Gelman–Rubin (R̂) diagnostics and compared model alternatives using leave‐one‐out cross‐validation.*
 
-To test for sex differences in survival, we added a fixed “male” coefficient to the logit‐scale survival predictor alongside the baseline intercept and period‐specific random effects. Pseudo-individuals were assigned sex by sampling from the observed sex ratio, assuming equal detectability. For each draw and period we computed the female logit (intercept + period effect), added the male coefficient to get the male logit, transformed both via the logistic function, and recorded their difference. We summarize those interval‐specific male–female differences by posterior mean, standard deviation, and 95 % credible interval.
+In our model φₜ represents the probability that an individual alive at primary period t survives through to t + 1.
+Because the interval length Δₜ (in months) varies, we standardized each φₜ to a per‐month rate by taking the Δₜth root of every posterior draw, producing monthly survival estimates (with 95% credible bounds) that are directly comparable across short summer and long overwinter intervals.
 
-To capture unmeasured heterogeneity in detection across survey occasions, we introduced survey‐specific random effects on logit‐scale detection. This parallels the hierarchical structure used for survival and recruitment in the original mrmr model and acknowledges that factors like temperature, effort, observer, and water clarity can affect detectability even when fixed covariate data are incomplete.
+To test for sex differences in survival, we added a fixed “male” coefficient to the logit‐scale survival predictor alongside the baseline intercept and period‐specific random effects.
+Pseudo-individuals were assigned sex by sampling from the observed sex ratio, assuming equal detectability.
+For each draw and period we computed the female logit (intercept + period effect), added the male coefficient to get the male logit, transformed both via the logistic function, and recorded their difference.
+We summarize those interval‐specific male–female differences by posterior mean, standard deviation, and 95% credible interval.
 
-As a final analytical step, we used the posterior samples from our fitted CMR model to test for climate–demography links. For each posterior draw, we calculated Pearson correlation coefficients between winter severity (percent of average snow-water equivalent remaining on 1 April) and each demographic parameter—monthly survival, recruitment, and adult abundance—thereby generating full posterior distributions of those correlations. To capture potential delayed effects given the frog’s multi-year tadpole overwintering, we repeated these analyses using winter severity at lag 0, 1, 2, and 3 years as well as a 3-year rolling average. This approach quantifies both the strength and uncertainty of climate influences on population dynamics while preserving the hierarchical uncertainty structure of our Bayesian framework.
+To capture unmeasured heterogeneity in detection across survey occasions, we introduced survey‐specific random effects on logit‐scale detection.
+This parallels the hierarchical structure used for survival and recruitment in the original mrmr model.
+
+As a final analytical step, we used the posterior samples from our fitted CMR model to evaluate the relationship between winter severity and adult survival, recruitment, and abundance.
+We calculated Pearson correlation coefficients between winter severity—measured as percent of average snow-water equivalent (SWE) on April 1, the date typically representing peak snowpack—and each demographic parameter, thereby generating full posterior distributions of those correlations.
+To capture potential delayed effects given the frog’s multi-year tadpole overwintering, we repeated these analyses using winter severity at lag 0, 1, 2, and 3 years as well as a 3-year rolling average.
 
 ### Environmental Covariates
 
-We defined winter severity as the percentage of historical average snow-water equivalent (SWE) remaining on April 1 each year (100% indicating average severity). We obtained SWE data from ten regional snow-survey stations (4.5–19.5 km from Mossy Pond) to capture the spatial variability in snowpack present in topographically complex mountainous environments [@revuelto2014]. Annual SWE values (2011–2018) were interpolated across the study area using inverse-distance weighting in ArcGIS Pro 3.4.3. From the resulting continuous SWE raster, we extracted the mean percent SWE within our one-square-mile study boundary. All raw SWE measurements were obtained from the California Data Exchange Center (CDEC; http://cdec.water.ca.gov).
+We defined yearly winter severity as the percent of April 1 average snow-water equivalent (SWE) in the Mossy Pond study area, because this date typically coincides with peak snowpack in mountainous regions of the western United States [@bohr2001].
+We obtained SWE data from ten regional snow-survey stations (4.5–19.5 km from Mossy Pond) to capture the spatial variability in snowpack present in topographically complex mountainous environments [@revuelto2014].
+Each station’s April 1 average is its 1991–2020 30-year normal, consistent with World Meteorological Organization standards [@naturalresourceconservationservice2025].
+For clarity, we label each winter by the calendar year in which it ends (e.g., “2011” refers to the 2010/2011 winter).
+Annual SWE values for winters 2011–2018 were interpolated across the study area with inverse-distance weighting in ArcGIS Pro 3.4.3, and we extracted the mean percent-of-average SWE within the one-square-mile study boundary.
+All raw SWE measurements were downloaded from the California Data Exchange Center (https://cdec.water.ca.gov)
 
 ## Results
 
 ### Bd status
 
-16 out of 24 samples tested positive for Bd, with infection intensities ranging from 16 to 43,318 ITS1 gene copies. These Bd loads are well below the \~600,000 gene copy threshold associated with severe chytridiomycosis and increased MYL frog mortality [@vredenburg2010; @longo2013]. The infection intensities observed in our study population are typical of those measured in other known naturally recovering *R. sierrae* populations [Figure 1; @knapp2024].
+16 out of 24 samples tested positive for Bd, and infection intensities of these Bd-positive swabs ranged from 16 to 43,318 ITS1 gene copies.
+These Bd loads are well below the \~600,000 gene copy threshold associated with severe chytridiomycosis and increased MYL frog mortality [@vredenburg2010; @joseph2018].
+The infection intensities observed in our study population are typical of those measured in other known naturally recovering *R. sierrae* populations [Figure 1; @knapp2024].
 
-![**Figure 1. Batrachochytrium dendrobatidis (Bd) infection loads across naturally recovering mountain yellow-legged frog populations.** Box plots show the distribution of Bd infection intensity (ITS1 gene copies) for Mossy Pond and three recovering Rana sierrae populations in Yosemite National Park (identified by ID numbers 70459, 72996, and 70567). The dashed red line indicates the approximate threshold (\~600,000 gene copies) associated with severe chytridiomycosis and increased mortality in mountain yellow-legged frogs. Note the logarithmic scale on the y-axis. All recovering populations maintain Bd loads well below the mortality threshold, with Mossy Pond showing infection intensities comparable to those observed in the Yosemite populations.](images/Bd_load_comparison-01.png)
+![***Batrachochytrium dendrobatidis*** **(Bd) infection loads across naturally recovering *Rana sierrae* populations.** Box plots with points show the distribution of Bd infection intensity (ITS1 gene copies) for Mossy Pond and three recovering *R. sierrae* populations in Yosemite National Park (identified by ID numbers 70459, 72996, and 70567). The dashed red line indicates the approximate threshold (\~600,000 gene copies) associated with severe chytridiomycosis and increased mortality in mountain yellow-legged frogs. The y-axis is on a log10 scale. Individuals from recovering populations generally maintain Bd loads below the mortality threshold, with Mossy Pond showing infection intensities comparable to those observed in the Yosemite populations.](images/Bd_load_comparison-03.png)
 
-### Abundance, Survival, Recruitment, and Detection
+### Capture-Mark-Recapture Surveys
 
-*Abundance*
+Over 47 surveys spanning 5 years, we recorded 3,631 captures of 657 unique *R. sierrae* individuals.
+Captures were spread fairly evenly over the 5 years..................Or were highest in.......?
+**Figure**?
 
-We calculated the abundance of the Mossy Pond *R. sierrae* population for each of the 16 primary survey periods of the study. The lowest abundance was observed in September 2018 (117 individuals, 95% credible interval (95% CrI): 103-132) and a maximum of 245 individuals (95% CrI: 237-256) was observed during the fifth primary period, in July 2015. Across all primary periods, the mean abundance of the population was 168 individuals.
+### Capture-Mark-Recapture Modeling
 
-*Recruitment*
+Across all primary periods, the mean abundance of the population was 168 individuals.
+The lowest abundance was observed in September 2018 (117 individuals, 95% CrI: 103-132) and a maximum of 245 individuals (95% CrI: 237-256) was observed in July 2015 (**Figure Xa**).
+A total of 629 frogs recruited into the adult population over the course of the study.
+Annual recruitment ranged from 60 individuals (95% CrI: 45-78) in 2018 to 166 individuals (95% CrI: 143-188) in 2015 (**Figure Xb)**.
+The average detection probability over 47 individual surveys was 0.45, ranging from 0.26 to 0.61.
 
-A total of 629 frogs recruited into the adult population over the course of the study. Annual recruitment ranged from 60 individuals (95% CrI: 45-78) in 2018 to 166 individuals (95% CrI: 143-188) in 2015.
+![Estimated adult abundance (N) of the Mossy Pond *Rana sierrae* population across 16 primary survey periods (June 2014–September 2018). Points show posterior median estimates; shaded ribbons represent 95 % Bayesian credible intervals.](images/N_plot.png)
 
-*Survival*
+![Estimated annual recruitment (B) in the Mossy Pond *Rana sierrae* population from 2014 to 2018. For each year, recruitment values are calculated by summing posterior estimates of recruitment across all primary periods within that year, preserving posterior covariance. Points represent posterior median estimates of total annual recruitment; shaded ribbons show 95 % Bayesian credible intervals.](images/B_plot.png)
 
-Monthly survival during the active (summer) season was markedly lower and more variable than during overwintering. Across 11 summer intervals, mean monthly survival was 0.803 (range: 0.673–0.904), whereas across 4 overwinter intervals, mean monthly survival was 0.966 (range: 0.945–0.974).
+Monthly survival during the summer was markedly lower and more variable than during winter (**Figure X**).
+Across 11 summer intervals, median monthly survival probability was 0.82 (95% CrI 0.63–0.92), whereas across 4 overwinter intervals, mean monthly survival was 0.97 (95% CrI 0.94–0.98).
+In every interval, mean male survival exceeded mean female survival, with differences ranging from 0.015 (95% CrI 0.004-0.029) to 0.069 (Figure 2).
+The 95% credible interval for each period does not contain zero, indicating consistently higher male survival across both summer and overwinter intervals.
+These results suggest a modest and consistent male survival advantage throughout the study.
 
-In every interval, mean male survival exceeded mean female survival, with differences ranging from 0.015 (95% CrI 0.004-0.029) between the first and second primary periods to 0.069 between the sixth and seventh primary periods (Figure 2). The 95% credible interval for each period lay entirely above zero, indicating consistently higher male survival across both summer and overwinter intervals. These results suggest a modest but statistically robust male survival advantage throughout the study.
+![Standardized monthly survival probabilities of of Rana sierrae at Mossy Pond, Tahoe National Forest, across 15 primary survey period transitions (June 2014 – August 2018). Points represent posterior medians; vertical shading shows 95% Bayesian credible intervals. Each point denotes survival for the interval beginning on the labelled primary period and ending at the next primary period. Red points are summer (active-season) transitions; blue points are overwinter transitions](images/phi_plot-03.png)
 
-![**Figure 2. Sex-specific survival differences in the Mossy Pond *Rana sierrae* population, 2014-2018.** Points represent the mean difference in monthly survival probability between males and females (M-F) across 15 primary period transitions. Vertical lines show 95% credible intervals. All intervals are entirely above zero, indicating consistently higher male survival across both summer and overwinter intervals throughout the study period. Overwinter periods occur during the 3-4, 6-7, 9-10, and 12-13 interval transitions.](images/survival_by_sex.png)
+![Sex-specific survival differences in the Mossy Pond Rana sierrae population, 2014-2018. Points represent the mean difference in survival probability between males and females (M-F) across 15 primary period transitions, colored by season (red: summer; blue: winter). Vertical lines show 95% Bayesian credible intervals. All credible intervals contain only positive values, indicating consistently higher male survival across all primary period transitions.](images/survival_sex_difference_plot-01.png)
 
-*Detection*
+### Winter severity and its effects on population dynamics
 
-For each survey (secondary period; n=47) of the study, we calculated the probability that an individual frog that is alive and available for detection is actually detected. Detection probability was lowest (median 0.26, 95% CrI: 0.2-0.31) during the sixteenth survey (09 September, 2015) and highest (median 0.61, 95% CrI: 0.54-0.67) during the forty-third survey (07 August, 2018). The average detection probability over 47 individual surveys was 0.45.
+Our study period coincided with high variation in winter severity at the Mossy Pond study area, with April 1 SWE ranging from 3.5% of historical average in 2015 to 150% in 2017 (**figure X**).
 
-### Winter severity effects on population dynamics
+![Winter severity index for the Sierra Nevada region, 2010–2011 through 2017–2018 winters, calculated as the percentage of average April 1 snow water equivalent (SWE). Bars show the relative snowpack severity for each winter season, with values greater than 100% indicating above-average snowpack and values below 100% indicating below-average conditions.](images/winter_severity_plot.png)
 
-Our study period coincided with high variation in winter severity at the Mossy Pond study area, with April 1 SWE ranging from 3.5% of historical average in 2015 to 150% in 2017. Our analyses reveal a strong negative correlation between winter severity lagged by one year and both the number of frogs recruited into the adult population (median correlation coefficient: -0.92; 95% CrI: –0.79 to -0.98; Figure 3) and the abundance of the population (median correlation coefficient: -0.84, 95% CrI: -0.8 to -0.89). Winter severity showed no notable relationship with overwinter survival probabilities.
-
-![**Figure 3. Relationship between adult Rana sierrae recruitment and prior year winter severity at Mossy Pond, 2014-2018.** The solid line represents the number of frogs recruited into the adult population each year (left y-axis), while the dashed line shows winter severity as percent of average snow-water equivalent (SWE) measured on April 1 of the prior year (right y-axis). Note the inverse relationship, with high recruitment following mild winters (low SWE) and reduced recruitment following severe winters (high SWE).](images/WinterSeverity_Recruitment-02.png)
+Our analyses reveal a strong negative correlation between winter severity lagged by one year and both the number of frogs recruited into the adult population (median correlation coefficient: -0.92; 95% CrI: –0.79 to -0.98; Figure 3) and the abundance of the population (median correlation coefficient: -0.84, 95% CrI: -0.8 to -0.89).
+Winter severity showed no notable relationship with overwinter survival probabilities.
 
 ![**Figure 4. Negative correlation between adult *Rana sierrae* recruitment and prior year winter severity at Mossy Pond.** Scatterplot showing the strong negative relationship (r = -0.92, 95% credible interval: -0.79 to -0.98) between annual adult frog recruitment and the prior year's winter severity (percent of average snow-water equivalent on April 1). Each point is labeled with the recruitment year (2014-2018). The gray line represents the linear regression of the posterior median number of frogs recruited against winter severity, illustrating the strong negative correlation between these variables. Years with mild prior winters (left side of x-axis) yielded substantially higher recruitment compared to years following severe winters (right side of x-axis).](images/WSB_corr.png)
 
 ## Discussion
 
-#### **Bd infection dynamics and evidence for resistance**
+#### **Patterns of Bd infection**
 
-The Mossy Pond frogs carried Bd at moderate prevalence (67%) but at infection intensities that were two to three orders of magnitude lower than levels associated with increased mortality in MYL frogs. Such low loads mirror those reported for other naturally recovering populations in Yosemite National Park and stand in stark contrast to the uniformly high loads (\>600,000 ITS1 copies) and near-certain mortality that typify collapsing populations [@vredenburg2010]. Coupled with the population’s stable abundance over the study period, these patterns are consistent with the idea that some degree of Bd resistance has arisen in this population. While such dynamics could reflect an evolutionary rescue process in which genotypes conferring lower susceptibility have increased in frequency, additional genetic and experimental evidence would be required to confirm that mechanism. This expands the geographic scope of Bd-resistant R. sierrae beyond the southern Sierra Nevada, indicating that resistance is not confined to a single environmental setting or genetic lineage.
+The moderate prevalence and low intensity of Bd infection in the Mossy Pond population is consistent with patterns reported for other naturally recovering populations in Yosemite National Park.
+This contrasts with the uniformly high loads (\>600,000 ITS1 copies) and associated high mortality that typify epizootic populations [@vredenburg2010].
+Coupled with the population’s stable abundance over the study period, these patterns are consistent with the idea that Mossy Pond frogs have developed some degree of Bd resistance.
+While such dynamics could reflect an evolutionary rescue process in which genotypes conferring lower susceptibility have increased in frequency, additional genetic and experimental evidence would be required to confirm that mechanism.
+This expands the geographic scope of Bd-resistant R.
+sierrae beyond the southern Sierra Nevada, indicating that resistance is not confined to a single environmental setting or genetic lineage.
 
 #### **Winter severity as a driver of recruitment and abundance**
 
-Our Bayesian correlation analysis revealed a strong negative association between winter severity in the previous year and both adult recruitment and population size. Mild, low-snow winters may enhance juvenile overwinter survival and accelerate growth such that more animals reach the 40 mm adult threshold before the next breeding season. This mechanism has been invoked for long-lived amphibians in other montane systems [@mccaffery2010] and is consistent with the lag-1 pattern we observe. The absence of any clear winter-severity signal in overwinter adult survival suggests that once frogs surpass a critical body size, they can tolerate a broad range of cold-season conditions.
+Our Bayesian correlation analysis revealed a strong negative association between winter severity in the previous year and both adult recruitment and population size.
+Mild, low-snow winters may enhance juvenile overwinter survival and accelerate growth such that more animals reach the 40 mm adult threshold before the next breeding season.
+This mechanism has been invoked for long-lived amphibians in other montane systems [@mccaffery2010] and is consistent with the lag-1 pattern we observe.
+The absence of any clear winter-severity signal in overwinter adult survival suggests that once frogs surpass a critical body size, they can tolerate a broad range of cold-season conditions.
 
 #### **Seasonal survival patterns**
 
-Monthly survival was consistently high during the four overwinter intervals (μ = 0.97) but dropped and became more variable in summer (μ = 0.80). Elevated summer mortality is probably multifactorial: frogs are active and conspicuous, water levels drop, and thermal and desiccation stress peak—all of which increase predation risk and physiological costs. Conversely, winter conditions at Mossy Pond may be unusually benign. Although the study area lacks the deep-water refuges (\>4m) traditionally thought essential, our capture records show adults concentrated in the rocky outlet stream and mud-bottomed main pond—habitats that can stay unfrozen and oxygenated thanks to possible groundwater inputs and insulating effects.
+Monthly survival was consistently high during the four overwinter intervals (μ = 0.97) but dropped and became more variable in summer (μ = 0.80).
+Elevated summer mortality is probably multifactorial: frogs are active and conspicuous, water levels drop, and thermal and desiccation stress peak—all of which increase predation risk and physiological costs.
+Conversely, winter conditions at Mossy Pond may be unusually benign.
+Although the study area lacks the deep-water refuges (\>4m) traditionally thought essential, our capture records show adults concentrated in the rocky outlet stream and mud-bottomed main pond—habitats that can stay unfrozen and oxygenated thanks to possible groundwater inputs and insulating effects.
 
-The pronounced male survival advantage across all intervals (Δφ = 0.02–0.07) contrasts with Fellers et al. (2013), who reported nearly identical annual survival of male and female R. sierrae at Summit Meadow, with females sometimes faring slightly better. Our pattern instead mirrors Rocky Mountain tailed frogs (*Ascaphus montanus*), where males have shown modestly higher survival [@honeycutt2019].
+The pronounced male survival advantage across all intervals (Δφ = 0.02–0.07) contrasts with Fellers et al. (2013), who reported nearly identical annual survival of male and female R.
+sierrae at Summit Meadow, with females sometimes faring slightly better.
+Our pattern instead mirrors Rocky Mountain tailed frogs (*Ascaphus montanus*), where males have shown modestly higher survival [@honeycutt2019].
 
-Several non-exclusive factors could explain why females at Mossy Pond survived slightly less well. Most obviously, the energetic burden of reproduction falls almost entirely on females: producing and depositing large gelatinous egg masses—often while bearing the added weight of one or more males in amplexus—depletes energy reserves and can delay post-breeding foraging. Post-oviposition condition declines have been linked to reduced annual survival in other anurans [e.g., common toads; @madsen2010]. Additionally, movement studies of *A. montanus* show that females travel farther than males to locate suitable oviposition sites, increasing exposure to predators and desiccating microhabitats [@honeycutt2019]. Together, these reproductive and behavioural costs may magnify female summer mortality in the Mossy Pond *R. sierrae* population, driving the male-biased survival pattern we observed.
+Several non-exclusive factors could explain why females at Mossy Pond survived slightly less well.
+Most obviously, the energetic burden of reproduction falls almost entirely on females: producing and depositing large gelatinous egg masses—often while bearing the added weight of one or more males in amplexus—depletes energy reserves and can delay post-breeding foraging.
+Post-oviposition condition declines have been linked to reduced annual survival in other anurans [e.g., common toads; @madsen2010].
+Additionally, movement studies of *A. montanus* show that females travel farther than males to locate suitable oviposition sites, increasing exposure to predators and desiccating microhabitats [@honeycutt2019].
+Together, these reproductive and behavioural costs may magnify female summer mortality in the Mossy Pond *R. sierrae* population, driving the male-biased survival pattern we observed.
 
 #### **Climate change context**
 
-Across the western United States, April-1 SWE has declined by about 18% on average since 1955, with particularly steep losses in northern California [@usepa2016]. Regional climate projections point to continued warming, more precipitation falling as rain rather than snow, and further reductions in spring snowpack over the coming decades [@gottlieb2024]. In the short term, such trends could benefit Mossy Pond frogs by sustaining the sequence of “light” winters that boost recruitment. Over longer horizons, however, chronic snowpack loss and more frequent summer droughts are likely to lower water levels, shorten hydroperiods, and shrink the already shallow overwintering habitats available in the basin. The drop in visual-encounter counts recorded after the 2018–2021 drought hints that these longer-term drying forces may eventually override the positive recruitment signal.
+Across the western United States, April-1 SWE has declined by about 18% on average since 1955, with particularly steep losses in northern California [@usepa2016].
+Regional climate projections point to continued warming, more precipitation falling as rain rather than snow, and further reductions in spring snowpack over the coming decades [@gottlieb2024].
+In the short term, such trends could benefit Mossy Pond frogs by sustaining the sequence of “light” winters that boost recruitment.
+Over longer horizons, however, chronic snowpack loss and more frequent summer droughts are likely to lower water levels, shorten hydroperiods, and shrink the already shallow overwintering habitats available in the basin.
+The drop in visual-encounter counts recorded after the 2018–2021 drought hints that these longer-term drying forces may eventually override the positive recruitment signal.
 
 ### Implications for conservation management
 
-Our results place the Mossy Pond frogs squarely within the “resistant-donor” framework that @knapp2024 used to successfully facilitate landscape-scale *R. sierrae* recovery in Yosemite National Park. In that 15-year experiment, reintroductions sourced from naturally recovering, Bd-resistant *R. sierrae* populations established self-sustaining colonies at 75% of recipient sites despite the pathogen’s continued presence, and half of those new populations were projected to remain viable over 50 years. The Mossy Pond population’s large size, stable demographics, and demonstrated resistance make it a valuable additional conservation resource, especially for northern Sierra reintroductions where local adaptation may confer an advantage for long-term population viability.
+Our results place the Mossy Pond frogs squarely within the “resistant-donor” framework that @knapp2024 used to successfully facilitate landscape-scale *R. sierrae* recovery in Yosemite National Park.
+In that 15-year experiment, reintroductions sourced from naturally recovering, Bd-resistant *R. sierrae* populations established self-sustaining colonies at 75% of recipient sites despite the pathogen’s continued presence, and half of those new populations were projected to remain viable over 50 years.
+The Mossy Pond population’s large size, stable demographics, and demonstrated resistance make it a valuable additional conservation resource, especially for northern Sierra reintroductions where local adaptation may confer an advantage for long-term population viability.
 
 ## References
